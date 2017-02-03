@@ -10,7 +10,12 @@ export interface Result {
 }
 
 export interface CodeGenerator {
-    run(ast:ImportedPackageExpression): Promise<Result[]>
+    transform(ast:ImportedPackageExpression, options:TranspileOptions): Promise<Result[]>
+}
+
+export interface TranspileOptions {
+    split?: boolean;
+    filename?: string;
 }
 
 export class Transpiler {
@@ -31,10 +36,10 @@ export class Transpiler {
         });
     }
 
-    async transpile(input:string|ImportedPackageExpression, transformer:CodeGenerator) {
+    async transpile(input:string|ImportedPackageExpression, transformer:CodeGenerator, options?:TranspileOptions) {
 
         let ast = isString(input) ? (await this.ast(input)) : input;
-        let result = await transformer.run(ast);
+        let result = await transformer.transform(ast, options);
 
         return result;
     }

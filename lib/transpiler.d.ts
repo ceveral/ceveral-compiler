@@ -6,10 +6,14 @@ export interface Result {
     buffer: Buffer;
 }
 export interface CodeGenerator {
-    run(ast: ImportedPackageExpression): Promise<Result[]>;
+    transform(ast: ImportedPackageExpression, options: TranspileOptions): Promise<Result[]>;
+}
+export interface TranspileOptions {
+    split?: boolean;
+    filename?: string;
 }
 export declare class Transpiler {
     pre: Preprocesser;
     ast(input: string, optionsOrFileName?: PreprocessOptions | string): Promise<ImportedPackageExpression>;
-    transpile(input: string | ImportedPackageExpression, transformer: CodeGenerator): Promise<Result[]>;
+    transpile(input: string | ImportedPackageExpression, transformer: CodeGenerator, options?: TranspileOptions): Promise<Result[]>;
 }
