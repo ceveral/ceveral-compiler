@@ -13,9 +13,8 @@ export interface CodeGenerator {
     transform(ast:ImportedPackageExpression, options:TranspileOptions): Promise<Result[]>
 }
 
-export interface TranspileOptions {
+export interface TranspileOptions extends PreprocessOptions {
     split?: boolean;
-    filename?: string;
 }
 
 export class Transpiler {
@@ -38,7 +37,7 @@ export class Transpiler {
 
     async transpile(input:string|ImportedPackageExpression, transformer:CodeGenerator, options?:TranspileOptions) {
 
-        let ast = isString(input) ? (await this.ast(input)) : input;
+        let ast = isString(input) ? (await this.ast(input, options)) : input;
         let result = await transformer.transform(ast, options);
 
         return result;

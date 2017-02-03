@@ -8,9 +8,8 @@ export interface Result {
 export interface CodeGenerator {
     transform(ast: ImportedPackageExpression, options: TranspileOptions): Promise<Result[]>;
 }
-export interface TranspileOptions {
+export interface TranspileOptions extends PreprocessOptions {
     split?: boolean;
-    filename?: string;
 }
 export declare class Transpiler {
     pre: Preprocesser;
