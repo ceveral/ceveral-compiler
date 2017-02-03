@@ -8,7 +8,7 @@ export interface Result {
 export interface CodeGenerator {
     run(ast: ImportedPackageExpression): Promise<Result[]>;
 }
-export declare class Transpilers {
+export declare class Transpiler {
     pre: Preprocesser;
     ast(input: string, optionsOrFileName?: PreprocessOptions | string): Promise<ImportedPackageExpression>;
     transpile(input: string | ImportedPackageExpression, transformer: CodeGenerator): Promise<Result[]>;

@@ -13,7 +13,7 @@ export interface CodeGenerator {
     run(ast:ImportedPackageExpression): Promise<Result[]>
 }
 
-export class Transpilers {
+export class Transpiler {
     pre: Preprocesser = new Preprocesser();
 
     ast(input: string, optionsOrFileName?: PreprocessOptions|string) {
