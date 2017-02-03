@@ -3,7 +3,8 @@ const gulp = require('gulp'),
     peg = require('gulp-peg'),
     merge = require('merge2'),
     rename = require('gulp-rename'),
-    gulpIgnore = require('gulp-ignore');
+    gulpIgnore = require('gulp-ignore'),
+    bump = require('gulp-bump');
 
 
 
@@ -51,6 +52,12 @@ gulp.task('grammar', () => {
 
     ])
 });
+
+gulp.task('bump', () => {
+    gulp.src('package.json')
+    .pipe(bump())
+    .pipe(gulp.dest('./'))
+})
 
 gulp.task('build', ['grammar', 'typescript']);
 

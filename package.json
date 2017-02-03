@@ -1,6 +1,6 @@
 {
   "name": "ceveral-compiler",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "",
   "main": "index.js",
   "scripts": {
@@ -23,6 +23,7 @@
     "typescript": "^2.1.5"
   },
   "dependencies": {
+    "gulp-bump": "^2.6.1",
     "mz": "^2.6.0"
   },
   "typings": "lib/index.d.ts"
