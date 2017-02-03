@@ -1,4 +1,4 @@
-import { Expression, PackageExpression, RecordExpression, AnnotationExpression, PropertyExpression, TypeExpression, ImportTypeExpression, RepeatedTypeExpression, OptionalTypeExpression, MapTypeExpression, RecordTypeExpression, ServiceExpression, MethodExpression, AnonymousRecordExpression, EnumTypeExpression, EnumMemberExpression } from './expressions';
+import { Expression, PackageExpression, RecordExpression, AnnotationExpression, PropertyExpression, TypeExpression, ImportTypeExpression, RepeatedTypeExpression, OptionalTypeExpression, MapTypeExpression, RecordTypeExpression, ServiceExpression, MethodExpression, AnonymousRecordExpression, NumericEnumExpression, NumericEnumMemberExpression, StringEnumExpression, StringEnumMemberExpression } from './expressions';
 export interface IVisitor {
     visit(expression: Expression): any;
     visitPackage(expression: PackageExpression): any;
@@ -10,8 +10,10 @@ export interface IVisitor {
     visitOptionalType(expression: OptionalTypeExpression): any;
     visitRepeatedType(expression: RepeatedTypeExpression): any;
     visitMapType(expression: MapTypeExpression): any;
-    visitEnumType(expression: EnumTypeExpression): any;
-    visitEnumTypeMember(expression: EnumMemberExpression): any;
+    visitNumericEnum(expression: NumericEnumExpression): any;
+    visitNumericEnumMember(expression: NumericEnumMemberExpression): any;
+    visitStringEnum(expression: StringEnumExpression): any;
+    visitStringEnumMember(expression: StringEnumMemberExpression): any;
     visitAnnotation(expression: AnnotationExpression): any;
     visitService(expression: ServiceExpression): any;
     visitMethod(expression: MethodExpression): any;
@@ -29,8 +31,10 @@ export declare abstract class BaseVisitor implements IVisitor {
     abstract visitRepeatedType(expression: RepeatedTypeExpression): any;
     abstract visitMapType(expression: MapTypeExpression): any;
     abstract visitAnnotation(expression: AnnotationExpression): any;
-    abstract visitEnumType(expression: EnumTypeExpression): any;
-    abstract visitEnumTypeMember(expression: EnumMemberExpression): any;
+    abstract visitNumericEnum(expression: NumericEnumExpression): any;
+    abstract visitNumericEnumMember(expression: NumericEnumMemberExpression): any;
+    abstract visitStringEnum(expression: StringEnumExpression): any;
+    abstract visitStringEnumMember(expression: StringEnumMemberExpression): any;
     visitService(_: ServiceExpression): any;
     visitMethod(_: MethodExpression): any;
     visitAnonymousRecord(_: AnonymousRecordExpression): any;

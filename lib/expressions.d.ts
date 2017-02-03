@@ -25,8 +25,10 @@ export declare abstract class Expression {
     static createService(position: ExpressionPosition, args: any[]): ServiceExpression;
     static createMethod(position: ExpressionPosition, args: any[]): MethodExpression;
     static createAnonymousRecord(position: ExpressionPosition, args: any[]): AnonymousRecordExpression;
-    static createEnumType(position: ExpressionPosition, args: any[]): EnumTypeExpression;
-    static createEnumMember(position: ExpressionPosition, args: any[]): EnumMemberExpression;
+    static createNumericEnum(position: ExpressionPosition, args: any[]): NumericEnumExpression;
+    static createNumericEnumMember(position: ExpressionPosition, args: any[]): NumericEnumMemberExpression;
+    static createStringEnum(position: ExpressionPosition, args: any[]): StringEnumExpression;
+    static createStringEnumMember(position: ExpressionPosition, args: any[]): StringEnumMemberExpression;
 }
 export declare class PackageExpression extends Expression {
     position: ExpressionPosition;
@@ -132,18 +134,32 @@ export declare class AnonymousRecordExpression extends Expression {
     nodeType: Token;
     constructor(position: ExpressionPosition, properties: PropertyExpression[]);
 }
-export declare class EnumTypeExpression extends Expression {
+export declare class NumericEnumExpression extends Expression {
     position: ExpressionPosition;
     name: string;
-    members: EnumMemberExpression[];
+    members: NumericEnumMemberExpression[];
     nodeType: Token;
-    constructor(position: ExpressionPosition, name: string, members: EnumMemberExpression[]);
+    constructor(position: ExpressionPosition, name: string, members: NumericEnumMemberExpression[]);
 }
-export declare class EnumMemberExpression extends Expression {
+export declare class NumericEnumMemberExpression extends Expression {
     position: ExpressionPosition;
     name: string;
     value: number;
     nodeType: Token;
     constructor(position: ExpressionPosition, name: string, value: number);
+}
+export declare class StringEnumExpression extends Expression {
+    position: ExpressionPosition;
+    name: string;
+    members: StringEnumMemberExpression[];
+    nodeType: Token;
+    constructor(position: ExpressionPosition, name: string, members: StringEnumMemberExpression[]);
+}
+export declare class StringEnumMemberExpression extends Expression {
+    position: ExpressionPosition;
+    name: string;
+    value: string;
+    nodeType: Token;
+    constructor(position: ExpressionPosition, name: string, value: string);
 }
 export declare function createExpression(type: Token, position: ExpressionPosition, ...args: any[]): Expression;

@@ -4,7 +4,8 @@ import {
     AnnotationExpression, PropertyExpression, TypeExpression, ImportTypeExpression,
     RepeatedTypeExpression, OptionalTypeExpression,
     MapTypeExpression, RecordTypeExpression,
-    ServiceExpression, MethodExpression, AnonymousRecordExpression, EnumTypeExpression, EnumMemberExpression
+    ServiceExpression, MethodExpression, AnonymousRecordExpression, 
+    NumericEnumExpression, NumericEnumMemberExpression, StringEnumExpression, StringEnumMemberExpression
 } from './expressions';
 
 export interface IVisitor {
@@ -20,9 +21,11 @@ export interface IVisitor {
     visitRepeatedType(expression: RepeatedTypeExpression): any;
     visitMapType(expression: MapTypeExpression): any;
     
-    visitEnumType(expression: EnumTypeExpression): any;
-    visitEnumTypeMember(expression: EnumMemberExpression): any;
-    
+    visitNumericEnum(expression: NumericEnumExpression): any;
+    visitNumericEnumMember(expression: NumericEnumMemberExpression): any;
+    visitStringEnum(expression: StringEnumExpression): any;
+    visitStringEnumMember(expression: StringEnumMemberExpression): any;
+
     visitAnnotation(expression: AnnotationExpression): any
 
     // Services
@@ -46,8 +49,12 @@ export abstract class BaseVisitor implements IVisitor {
             case Token.OptionalType: return this.visitOptionalType(expression as OptionalTypeExpression);
             case Token.RepeatedType: return this.visitRepeatedType(expression as RepeatedTypeExpression);
             case Token.MapType: return this.visitMapType(expression as MapTypeExpression);
-            case Token.EnumType: return this.visitEnumType(expression as EnumTypeExpression);
-            case Token.EnumMember: return this.visitEnumTypeMember(expression as EnumMemberExpression);
+            
+            case Token.NumericEnum: return this.visitNumericEnum(expression as NumericEnumExpression);
+            case Token.NumericEnumMember: return this.visitNumericEnumMember(expression as NumericEnumMemberExpression);
+            case Token.StringEnum: return this.visitStringEnum(expression as StringEnumExpression);
+            case Token.StringEnumMember: return this.visitStringEnumMember(expression as StringEnumMemberExpression);
+
             case Token.Annotation: return this.visitAnnotation(expression as AnnotationExpression);
 
             case Token.Service: return this.visitService(expression as ServiceExpression);
@@ -71,8 +78,11 @@ export abstract class BaseVisitor implements IVisitor {
     abstract visitRepeatedType(expression: RepeatedTypeExpression): any;
     abstract visitMapType(expression: MapTypeExpression): any;
     abstract visitAnnotation(expression: AnnotationExpression): any
-    abstract visitEnumType(expression: EnumTypeExpression): any;
-    abstract visitEnumTypeMember(expression: EnumMemberExpression): any;
+    abstract visitNumericEnum(expression: NumericEnumExpression): any;
+    abstract visitNumericEnumMember(expression: NumericEnumMemberExpression): any;
+    abstract visitStringEnum(expression: StringEnumExpression): any;
+    abstract visitStringEnumMember(expression: StringEnumMemberExpression): any;
+
 
     visitService(_: ServiceExpression): any {
 

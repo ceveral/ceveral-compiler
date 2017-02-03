@@ -13,8 +13,10 @@ export declare enum Token {
     Service = 12,
     Method = 13,
     AnonymousRecord = 14,
-    EnumType = 15,
-    EnumMember = 16,
+    NumericEnum = 15,
+    StringEnum = 16,
+    NumericEnumMember = 17,
+    StringEnumMember = 18,
 }
 export declare enum Type {
     String = 1,

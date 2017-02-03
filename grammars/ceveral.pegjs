@@ -127,18 +127,29 @@ ImportType
 	}
 
 EnumType 
-  = "enum" __  i:Identifier __ "{" __ e:enum_members __  "}" {
-    return expression(Token.EnumType, i, e);
+  = "enum" __  i:Identifier __ "{" __ e:senum_members __  "}" {
+    return expression(Token.StringEnumMember, i, e);
+  } 
+  / "enum" __  i:Identifier __ "{" __ e:nenum_members __  "}" {
+    return expression(Token.NumericEnumMember, i, e);
   }
 
-enum_members
-  = e:enum_member __ semi rest:(__ e:enum_member __ semi { return e} )* {
+nenum_members
+  = e:nenum_member __ semi rest:(__ e:nenum_member __ semi { return e} )* {
     return [e].concat(rest)
   }
 
-enum_member
-  = i:Identifier __ "=" __ d:DIGIT+ { return expression(Token.EnumMember, i, parseInt(d.join('')))  }
-  / i:Identifier { return expression(Token.EnumMember, i, null) }
+senum_members
+  = e:senum_member __ semi rest:(__ e:senum_member __ semi { return e} )* {
+    return [e].concat(rest)
+  }
+
+nenum_member
+  = i:Identifier __ "=" __ d:DIGIT+ { return expression(Token.NumericEnumMember, i, parseInt(d.join('')))  }
+  / i:Identifier { return expression(Token.NumericEnumMember, i, null) }
+
+senum_member
+  = i:Identifier __ "=" __ s:string { return expression(Token.StringEnumMember, i, s)  }
 
 Annotation
 	= "@" a:Identifier "(" o:Argument ")" {

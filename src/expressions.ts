@@ -80,12 +80,20 @@ export abstract class Expression {
         return new AnonymousRecordExpression(position, args[0]);
     }
 
-    static createEnumType(position: ExpressionPosition, args: any[]) {
-        return new EnumTypeExpression(position, args[0], args[1]);
+    static createNumericEnum(position: ExpressionPosition, args: any[]) {
+        return new NumericEnumExpression(position, args[0], args[1]);
     }
 
-    static createEnumMember(position: ExpressionPosition, args: any[]) {
-        return new EnumMemberExpression(position, args[0], args[1]);
+    static createNumericEnumMember(position: ExpressionPosition, args: any[]) {
+        return new NumericEnumMemberExpression(position, args[0], args[1]);
+    }
+
+    static createStringEnum(position: ExpressionPosition, args: any[]) {
+        return new StringEnumExpression(position, args[0], args[1]);
+    }
+
+    static createStringEnumMember(position: ExpressionPosition, args: any[]) {
+        return new StringEnumMemberExpression(position, args[0], args[1]);
     }
 }
 
@@ -209,16 +217,30 @@ export class AnonymousRecordExpression extends Expression {
     }
 }
 
-export class EnumTypeExpression extends Expression {
-    nodeType = Token.EnumType;
-    constructor(public position: ExpressionPosition, public name: string, public members: EnumMemberExpression[]) {
+export class NumericEnumExpression extends Expression {
+    nodeType = Token.NumericEnum;
+    constructor(public position: ExpressionPosition, public name: string, public members: NumericEnumMemberExpression[]) {
         super();
     }
 }
 
-export class EnumMemberExpression extends Expression {
-    nodeType = Token.EnumMember;
+export class NumericEnumMemberExpression extends Expression {
+    nodeType = Token.NumericEnumMember;
     constructor(public position: ExpressionPosition, public name: string, public value: number) {
+        super();
+    }
+}
+
+export class StringEnumExpression extends Expression {
+    nodeType = Token.StringEnum;
+    constructor(public position: ExpressionPosition, public name: string, public members: StringEnumMemberExpression[]) {
+        super();
+    }
+}
+
+export class StringEnumMemberExpression extends Expression {
+    nodeType = Token.StringEnumMember;
+    constructor(public position: ExpressionPosition, public name: string, public value: string) {
         super();
     }
 }
@@ -237,8 +259,12 @@ export function createExpression(type: Token, position: ExpressionPosition, ...a
         case Token.MapType: return Expression.createMapType(position, args);
         case Token.Annotation: return Expression.createAnnotation(position, args);
 
-        case Token.EnumType: return Expression.createEnumType(position, args);
-        case Token.EnumMember: return Expression.createEnumMember(position, args);
+        case Token.NumericEnum: return Expression.createNumericEnum(position, args);
+        case Token.NumericEnumMember: return Expression.createNumericEnumMember(position, args);
+
+        case Token.StringEnum: return Expression.createStringEnum(position, args);
+        case Token.StringEnumMember: return Expression.createStringEnumMember(position, args);
+
 
         case Token.Service: return Expression.createService(position, args);
         case Token.Method: return Expression.createMethod(position, args);

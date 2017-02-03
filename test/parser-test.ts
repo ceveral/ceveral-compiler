@@ -38,6 +38,30 @@ describe('Parser', () => {
         should((prop.type as TypeExpression).type).equal(Type.String);
         should(prop.annotations.length).equal(0);
 
+    });
+
+    it('should parse numeric enum', () => {
+        let ast = Parser.parse(`
+            package main;
+            enum Enum {
+                Member1 = 1;
+                Member2;
+            }
+        `);
+
+        
+    });
+
+    it('should parse string enum', () => {
+        let ast = Parser.parse(`
+            package main;
+            enum Enum {
+                Member1 = "hello";
+                Member2 = "helloe2";
+            }
+        `);
+
+       
     })
 
 });
