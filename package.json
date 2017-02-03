@@ -1,0 +1,28 @@
+{
+  "name": "ceveral-compiler",
+  "version": "0.0.1",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "node node_modules/.bin/mocha"
+  },
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "@types/mocha": "^2.2.38",
+    "@types/node": "^7.0.4",
+    "@types/should": "^8.1.30",
+    "gulp": "^3.9.1",
+    "gulp-ignore": "^2.0.2",
+    "gulp-peg": "^0.2.0",
+    "gulp-rename": "^1.2.2",
+    "gulp-typescript": "^3.1.4",
+    "merge2": "^1.0.3",
+    "mocha": "^3.2.0",
+    "should": "^11.2.0",
+    "typescript": "^2.1.5"
+  },
+  "dependencies": {
+    "mz": "^2.6.0"
+  }
+}
