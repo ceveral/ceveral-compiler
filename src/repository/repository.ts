@@ -54,16 +54,19 @@ export class Repository {
             let desc: TransformerDescription;
             try {
                 desc = require(path);
-                if (desc && desc.hasOwnProperty('default')) {
+                
+                if (desc && (<any>desc).__esModule) {
                     desc = (<any>desc).default
                 }
             } catch (e) { 
+                
                 continue; 
             }
             let base = Path.basename(Path.dirname(path)).replace('ceveral-transformer-','');
             
             if (isDescription(desc)) this.transformers[base] = desc;
         }
+
         
     }
 

@@ -128,20 +128,20 @@ ImportType
 
 EnumType 
   = "enum" __  i:Identifier __ "{" __ e:senum_members __  "}" {
-    return expression(Token.StringEnumMember, i, e);
+    return expression(Token.StringEnum, i, e);
   } 
   / "enum" __  i:Identifier __ "{" __ e:nenum_members __  "}" {
-    return expression(Token.NumericEnumMember, i, e);
+    return expression(Token.NumericEnum, i, e);
   }
 
 nenum_members
-  = e:nenum_member __ semi rest:(__ e:nenum_member __ semi { return e} )* {
-    return [e].concat(rest)
+  = e:nenum_member __ semi rest:(__ ee:nenum_member __ semi { return ee} )* {
+    return flatten([e].concat(rest))
   }
 
 senum_members
-  = e:senum_member __ semi rest:(__ e:senum_member __ semi { return e} )* {
-    return [e].concat(rest)
+  = e:senum_member __ semi rest:(__ ee:senum_member __ semi { return ee} )* {
+    return flatten([e].concat(rest))
   }
 
 nenum_member
