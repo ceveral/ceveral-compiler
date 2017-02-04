@@ -2,6 +2,8 @@ import * as Parser from '../lib/parser';
 import {Token, Type} from '../lib/tokens';
 import {RecordExpression, TypeExpression} from '../lib/expressions'
 import * as should from 'should';
+
+
 describe('Parser', () => {
 
     it('should parse package', () => {

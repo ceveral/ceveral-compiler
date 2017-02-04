@@ -1,0 +1,8 @@
+package main;
+
+record Address {
+    street: string;
+    zip_code: int;
+    city: string;
+    country: string;
+}

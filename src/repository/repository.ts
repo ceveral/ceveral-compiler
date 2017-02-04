@@ -67,7 +67,7 @@ export class Repository {
                 continue; 
             }
             let base = Path.basename(Path.dirname(path)).replace('ceveral-transformer-','');
-            
+            debug('found transformer "%s" at path "%s"', desc.name, path);
             if (isDescription(desc)) this.transformers[base] = desc;
         }
 

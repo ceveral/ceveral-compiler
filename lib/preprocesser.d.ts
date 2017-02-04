@@ -21,7 +21,7 @@ export interface PreprocessOptions {
 export declare class Preprocesser {
     private parent;
     private previousParent;
-    parse(item: PackageExpression, options: PreprocessOptions): Promise<ImportedPackageExpression>;
+    parse(item: PackageExpression, optionsOrPath: PreprocessOptions): Promise<ImportedPackageExpression>;
     private process(item, options);
     private detectCircularDependencies(path);
     private import(item, options);

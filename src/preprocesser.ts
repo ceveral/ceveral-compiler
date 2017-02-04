@@ -8,6 +8,9 @@ import * as Parser from './parser';
 import * as fs from 'mz/fs';
 import {flatten} from './utils';
 import {ValidationError,AnnotationValidationError} from './errors'
+import * as Debug from 'debug';
+const debug = Debug('ceveral:preprocesser');
+import * as _ from 'lodash';
 
 export interface PreprocessOptions {
     /**
@@ -31,12 +34,19 @@ export class Preprocesser {
     private parent: string;
     private previousParent: string
 
-    async parse(item: PackageExpression, options: PreprocessOptions) {
-        let e = await this.process(item, options)
-        //this.validateImportTypes(e);
+    async parse(item: PackageExpression, optionsOrPath: PreprocessOptions) {
+        let options: PreprocessOptions = optionsOrPath||{fileName:null};
 
-        this.validate(e, options);
-        return e;
+        if (typeof optionsOrPath === 'string') {
+            options = {fileName: optionsOrPath};
+        }
+
+        if (!options.fileName) throw new Error('You must provide a fileName');
+
+        let pack = await this.process(item, options)
+        this.validate(pack, options);
+
+        return pack;
     }
 
 
@@ -169,8 +179,9 @@ export class Preprocesser {
         if (type.nodeType !== Token.ImportType) return [];
 
         let found = !!imports.find(m => m[0] == type.packageName && m[1] == type.name);
+    
         if (!found) {
-            return [new ValidationError("sted", {
+            return [new ValidationError(`imported usertype: "${type.packageName}.${type.name}", could not be resolved`, {
                 property: item.name,
                 type: type.name,
                 position: type.position
@@ -186,10 +197,12 @@ export class Preprocesser {
     }
 
     private getImports(item: PackageExpression) {
+        let include = [Token.Record, Token.StringEnum, Token.NumericEnum]
         let imports = item.imports.map(m => {
-            return m.children.filter(mm => mm.nodeType == Token.Record).map(mm => [m.name, (mm as RecordExpression).name]);
+            return m.children.filter(mm => include.indexOf(mm.nodeType) > -1).map(mm => [m.name, (mm as RecordExpression).name]);
         });
-        return flatten(imports);
+        
+        return _.flatten(imports)
 
     }
 

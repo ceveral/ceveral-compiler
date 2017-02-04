@@ -1,13 +1,14 @@
 import { ExpressionPosition } from './expressions';
 export declare class ValidationError extends Error {
     message: string;
-    errors: any;
-    constructor(message: string, errors?: any);
+    errors: any[];
+    constructor(message: string, errors?: any[]);
     toJSON(): {
         name: string;
         message: string;
-        errors: any;
+        errors: any[];
     };
+    toString(): string;
 }
 export declare class AnnotationValidationError extends Error {
     message: string;

@@ -1,0 +1,9 @@
+package main;
+
+import "./address";
+
+record Person {
+    name: string;
+    age: int;
+    address: main.Address;
+}

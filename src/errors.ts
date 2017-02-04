@@ -1,7 +1,7 @@
 import {ExpressionPosition} from './expressions';
 
 export class ValidationError extends Error {
-    constructor(public message: string, public errors: any = []) {
+    constructor(public message: string, public errors: any[] = []) {
         super(message);
         this.name = 'ValidationError';
     }
@@ -12,13 +12,25 @@ export class ValidationError extends Error {
             name: this.name,
             message: this.message,
             errors: this.errors.map(e => {
-                if (e && typeof e.toJSON === 'function') {
-                    return e.toJSON();
+                if (e && typeof (<any>e).toJSON === 'function') {
+                    return (<any>e).toJSON();
                 }
                 return { message: e.message, name: e.name }
             })
         };
 
+    }
+
+
+    toString() {
+        let e = "ValidationError: " + this.message;
+        e += '  ' + this.errors.map( m => {
+            if (typeof (m as any).toString === 'function') {
+                return (m as any).toString();
+            }
+            return m.message||m;
+        }).join('\n  ');
+        return e;
     }
 }
 
