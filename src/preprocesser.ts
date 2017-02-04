@@ -78,7 +78,7 @@ export class Preprocesser {
 
     private async import(item: ImportExpression, options: PreprocessOptions): Promise<ImportedPackageExpression> {
         let dirName = Path.dirname(options.fileName);
-        let path = Path.resolve(dirName, item.path + ".record");
+        let path = Path.resolve(dirName, item.path + ".cev");
 
         this.detectCircularDependencies(path);
 
