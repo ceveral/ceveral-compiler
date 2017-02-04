@@ -1,5 +1,5 @@
 {
-    var lib = require('./expression'),
+    var lib = require('./expressions'),
       flatten = require('../utils').flatten;
     var NodeType = lib.NodeType,
         PrimitiveType = lib.PrimitiveType,
