@@ -84,7 +84,7 @@ export namespace resolver {
             debug('found %s, trying to register', generatorReference);
 
             if (realPath !== generatorReference) {
-                console.log(realPath, generatorReference)
+                //console.log(realPath, generatorReference)
                 //namespace = this.namespace(generatorReference);
             }
             return realPath;
