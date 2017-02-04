@@ -4,13 +4,13 @@ import { ImportedPackageExpression } from './expressions'
 import * as Parser from './parser';
 import {isString} from './utils';
 
-export interface Result {
+export interface IResult {
     filename: string;
     buffer: Buffer;
 }
 
 export interface CodeGenerator {
-    transform(ast:ImportedPackageExpression, options:TranspileOptions): Promise<Result[]>
+    transform(ast:ImportedPackageExpression, options:TranspileOptions): Promise<IResult[]>
 }
 
 export interface TranspileOptions extends PreprocessOptions {

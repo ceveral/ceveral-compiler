@@ -23,6 +23,7 @@
     "typescript": "^2.1.5"
   },
   "dependencies": {
+    "globby": "^6.1.0",
     "gulp-bump": "^2.6.1",
     "mz": "^2.6.0"
   },
