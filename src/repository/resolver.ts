@@ -5,7 +5,7 @@ import * as  _ from 'lodash';
 import * as Debug from 'debug';
 import * as fs from 'mz/fs';
 
-const debug = Debug('ceveral:resolver');
+const debug = Debug('ceveral:repository:resolver');
 
 const win32 = process.platform === 'win32';
 

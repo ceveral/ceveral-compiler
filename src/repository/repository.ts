@@ -4,6 +4,8 @@ import {PreprocessOptions} from '../preprocesser'
 import { IResult, CodeGenerator, TranspileOptions } from '../transpiler'
 import {Validator} from '../options/validator'
 import * as Path from 'path';
+import * as Debug from 'debug';
+const debug = Debug('ceveral:resolver');
 
 export interface AnnotationDescriptions {
     records?: { [key: string]: AnnotationDescription };
@@ -13,6 +15,7 @@ export interface AnnotationDescriptions {
 export interface AnnotationDescription {
     arguments: string;
 }
+
 
 export interface TransformerDescription extends CodeGenerator {
     id?:string;
@@ -52,6 +55,7 @@ export class Repository {
 
         for (let path of paths) {
             let desc: TransformerDescription;
+            debug('found path %s, trying to load', path);
             try {
                 desc = require(path);
                 
@@ -59,7 +63,7 @@ export class Repository {
                     desc = (<any>desc).default
                 }
             } catch (e) { 
-                
+                debug('could not load %s: %s', path, e.message);                
                 continue; 
             }
             let base = Path.basename(Path.dirname(path)).replace('ceveral-transformer-','');
