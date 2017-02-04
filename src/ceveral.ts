@@ -27,6 +27,7 @@ export class Ceveral {
         let files: IResult[] = [];
         for (let transformer of transformers) {
             let opts = getAnnotationValidations(transformer)||{fileName:options.fileName};
+            opts.fileName = opts.fileName||options.fileName;
             let results = await this.transpiler.transpile(input, transformer, opts);
             if (results) {
                 files.push(...results)

@@ -1,6 +1,6 @@
 {
   "name": "ceveral-compiler",
-  "version": "0.0.9",
+  "version": "0.0.10",
   "description": "",
   "main": "index.js",
   "scripts": {
@@ -12,6 +12,7 @@
     "@types/mocha": "^2.2.38",
     "@types/node": "^7.0.4",
     "@types/should": "^8.1.30",
+    "@types/vinyl": "^2.0.0",
     "gulp": "^3.9.1",
     "gulp-ignore": "^2.0.2",
     "gulp-peg": "^0.2.0",
@@ -24,6 +25,7 @@
   },
   "dependencies": {
     "debug": "^2.6.0",
+    "global-modules": "^0.2.3",
     "globby": "^6.1.0",
     "gulp-bump": "^2.6.1",
     "lodash": "^4.17.4",
