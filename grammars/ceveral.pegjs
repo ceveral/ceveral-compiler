@@ -99,8 +99,6 @@ PrimitiveType
 	= "string" { return Type.String; }
 	/ "date" { return Type.Date; }
 	/ "bool" { return Type.Boolean; }
-	/ "int" { return Type.Int; }
-	/ "uint" { return Type.Uint; }
 	/ "int8" { return Type.Int8; }
 	/ "int16" { return Type.Int16; }
 	/ "int32" { return Type.Int32; }
@@ -109,6 +107,8 @@ PrimitiveType
 	/ "uint16" { return Type.Uint16; }
 	/ "uint32" { return Type.Uint32; }
 	/ "uint64" { return Type.Uint64; }
+  / "int" { return Type.Int; }
+  / "uint" { return Type.Uint; }
 	/ "double" { return Type.Double; }
 	/ "float" { return Type.Float; }
   / "bytes" { return Type.Bytes; }
