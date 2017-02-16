@@ -217,14 +217,14 @@ export class AnonymousRecordExpression extends Expression {
     }
 }
 
-export class NumericEnumExpression extends Expression {
+export class NumericEnumExpression extends AnnotatedExpression {
     nodeType = Token.NumericEnum;
     constructor(public position: ExpressionPosition, public name: string, public members: NumericEnumMemberExpression[]) {
         super();
     }
 }
 
-export class NumericEnumMemberExpression extends Expression {
+export class NumericEnumMemberExpression extends AnnotatedExpression {
     nodeType = Token.NumericEnumMember;
     constructor(public position: ExpressionPosition, public name: string, public value: number) {
         super();
