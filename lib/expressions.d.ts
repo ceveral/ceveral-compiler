@@ -134,12 +134,13 @@ export declare class AnonymousRecordExpression extends Expression {
     nodeType: Token;
     constructor(position: ExpressionPosition, properties: PropertyExpression[]);
 }
-export declare class NumericEnumExpression extends Expression {
+export declare class NumericEnumExpression extends AnnotatedExpression {
     position: ExpressionPosition;
     name: string;
+    annotations: AnnotationExpression[];
     members: NumericEnumMemberExpression[];
     nodeType: Token;
-    constructor(position: ExpressionPosition, name: string, members: NumericEnumMemberExpression[]);
+    constructor(position: ExpressionPosition, name: string, annotations: AnnotationExpression[], members: NumericEnumMemberExpression[]);
 }
 export declare class NumericEnumMemberExpression extends Expression {
     position: ExpressionPosition;
@@ -156,12 +157,11 @@ export declare class StringEnumExpression extends AnnotatedExpression {
     nodeType: Token;
     constructor(position: ExpressionPosition, name: string, annotations: AnnotationExpression[], members: StringEnumMemberExpression[]);
 }
-export declare class StringEnumMemberExpression extends AnnotatedExpression {
+export declare class StringEnumMemberExpression extends Expression {
     position: ExpressionPosition;
     name: string;
-    annotations: AnnotationExpression[];
     value: string;
     nodeType: Token;
-    constructor(position: ExpressionPosition, name: string, annotations: AnnotationExpression[], value: string);
+    constructor(position: ExpressionPosition, name: string, value: string);
 }
 export declare function createExpression(type: Token, position: ExpressionPosition, ...args: any[]): Expression;

@@ -81,7 +81,7 @@ export abstract class Expression {
     }
 
     static createNumericEnum(position: ExpressionPosition, args: any[]) {
-        return new NumericEnumExpression(position, args[0], args[1]);
+        return new NumericEnumExpression(position, args[0], args[1], args[2]);
     }
 
     static createNumericEnumMember(position: ExpressionPosition, args: any[]) {
@@ -93,7 +93,7 @@ export abstract class Expression {
     }
 
     static createStringEnumMember(position: ExpressionPosition, args: any[]) {
-        return new StringEnumMemberExpression(position, args[0], args[1], args[2]);
+        return new StringEnumMemberExpression(position, args[0], args[1]);
     }
 }
 
@@ -219,12 +219,12 @@ export class AnonymousRecordExpression extends Expression {
 
 export class NumericEnumExpression extends AnnotatedExpression {
     nodeType = Token.NumericEnum;
-    constructor(public position: ExpressionPosition, public name: string, public members: NumericEnumMemberExpression[]) {
-        super();
+    constructor(public position: ExpressionPosition, public name: string, public annotations: AnnotationExpression[], public members: NumericEnumMemberExpression[]) {
+        super(annotations);
     }
 }
 
-export class NumericEnumMemberExpression extends AnnotatedExpression {
+export class NumericEnumMemberExpression extends Expression {
     nodeType = Token.NumericEnumMember;
     constructor(public position: ExpressionPosition, public name: string, public value: number) {
         super();
@@ -238,10 +238,10 @@ export class StringEnumExpression extends AnnotatedExpression {
     }
 }
 
-export class StringEnumMemberExpression extends AnnotatedExpression {
+export class StringEnumMemberExpression extends Expression {
     nodeType = Token.StringEnumMember;
-    constructor(public position: ExpressionPosition, public name: string, public annotations: AnnotationExpression[], public value: string) {
-        super(annotations);
+    constructor(public position: ExpressionPosition, public name: string, public value: string) {
+        super();
     }
 }
 
