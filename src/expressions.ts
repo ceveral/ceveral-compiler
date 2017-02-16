@@ -89,11 +89,11 @@ export abstract class Expression {
     }
 
     static createStringEnum(position: ExpressionPosition, args: any[]) {
-        return new StringEnumExpression(position, args[0], args[1]);
+        return new StringEnumExpression(position, args[0], args[1], args[2]);
     }
 
     static createStringEnumMember(position: ExpressionPosition, args: any[]) {
-        return new StringEnumMemberExpression(position, args[0], args[1]);
+        return new StringEnumMemberExpression(position, args[0], args[1], args[2]);
     }
 }
 
@@ -231,17 +231,17 @@ export class NumericEnumMemberExpression extends Expression {
     }
 }
 
-export class StringEnumExpression extends Expression {
+export class StringEnumExpression extends AnnotatedExpression {
     nodeType = Token.StringEnum;
-    constructor(public position: ExpressionPosition, public name: string, public members: StringEnumMemberExpression[]) {
-        super();
+    constructor(public position: ExpressionPosition, public name: string, public annotations: AnnotationExpression[],  public members: StringEnumMemberExpression[]) {
+        super(annotations);
     }
 }
 
-export class StringEnumMemberExpression extends Expression {
+export class StringEnumMemberExpression extends AnnotatedExpression {
     nodeType = Token.StringEnumMember;
-    constructor(public position: ExpressionPosition, public name: string, public value: string) {
-        super();
+    constructor(public position: ExpressionPosition, public name: string, public annotations: AnnotationExpression[], public value: string) {
+        super(annotations);
     }
 }
 

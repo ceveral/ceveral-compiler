@@ -127,11 +127,11 @@ ImportType
 	}
 
 EnumType 
-  = "enum" __  i:Identifier __ "{" __ e:senum_members __  "}" {
-    return expression(Token.StringEnum, i, e);
+  = a:(aa:Annotation __ { return aa;})* "enum" __  i:Identifier __ "{" __ e:senum_members __  "}" {
+    return expression(Token.StringEnum, i, a, e);
   } 
-  / "enum" __  i:Identifier __ "{" __ e:nenum_members __  "}" {
-    return expression(Token.NumericEnum, i, e);
+  / a:(aa:Annotation __ { return aa;})* "enum" __  i:Identifier __ "{" __ e:nenum_members __  "}" {
+    return expression(Token.NumericEnum, i, a, e);
   }
 
 nenum_members

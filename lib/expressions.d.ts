@@ -148,18 +148,20 @@ export declare class NumericEnumMemberExpression extends Expression {
     nodeType: Token;
     constructor(position: ExpressionPosition, name: string, value: number);
 }
-export declare class StringEnumExpression extends Expression {
+export declare class StringEnumExpression extends AnnotatedExpression {
     position: ExpressionPosition;
     name: string;
+    annotations: AnnotationExpression[];
     members: StringEnumMemberExpression[];
     nodeType: Token;
-    constructor(position: ExpressionPosition, name: string, members: StringEnumMemberExpression[]);
+    constructor(position: ExpressionPosition, name: string, annotations: AnnotationExpression[], members: StringEnumMemberExpression[]);
 }
-export declare class StringEnumMemberExpression extends Expression {
+export declare class StringEnumMemberExpression extends AnnotatedExpression {
     position: ExpressionPosition;
     name: string;
+    annotations: AnnotationExpression[];
     value: string;
     nodeType: Token;
-    constructor(position: ExpressionPosition, name: string, value: string);
+    constructor(position: ExpressionPosition, name: string, annotations: AnnotationExpression[], value: string);
 }
 export declare function createExpression(type: Token, position: ExpressionPosition, ...args: any[]): Expression;
