@@ -31,11 +31,6 @@ Program
     return expression(Token.Package, p, body)
   }
 
-/*Elements
-  = head:(__ Import)? __ tail:Body? __ {
-
-    return (head||[null]).slice(1).concat(tail)
-  }*/
 Elements
   = head:Element rest:(ws e:Element { return e; })* {
     return [head].concat(rest);
@@ -55,12 +50,13 @@ Import
 		return expression(Token.Import, n.join(''))
 	}
 
-
+/*
 Body
 	= r:Records { return r }
 
 Records
 	= __ recs:(  __ r:Record __ { return r; })+ { return recs; }
+*/
 
 Record
 	= a:(aa:Annotation __ { return aa;})* "record" _+ name:Identifier __ "{" __ body:RecordBody* __ "}" {
