@@ -1,7 +1,7 @@
 
 export enum Token {
     Package = 1, Record, Property, Import, ImportType, PrimitiveType,
-    OptionalType, RepeatedType, MapType, Annotation, RecordType,
+    OptionalType, RepeatedType, MapType, Annotation, UserType,
     Service, Method, AnonymousRecord, NumericEnum, StringEnum, NumericEnumMember, StringEnumMember
 }
 

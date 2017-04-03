@@ -43,7 +43,7 @@ export abstract class BaseVisitor implements IVisitor {
             case Token.Package: return this.visitPackage(expression as PackageExpression);
             case Token.Record: return this.visitRecord(expression as RecordExpression);
             case Token.Property: return this.visitProperty(expression as PropertyExpression);
-            case Token.RecordType: return this.visitUserType(expression as RecordTypeExpression);
+            case Token.UserType: return this.visitUserType(expression as RecordTypeExpression);
             case Token.PrimitiveType: return this.visitType(expression as TypeExpression);
             case Token.ImportType: return this.visitImportType(expression as ImportTypeExpression);
             case Token.OptionalType: return this.visitOptionalType(expression as OptionalTypeExpression);

@@ -10,7 +10,7 @@ export interface ExpressionPosition {
 }
 export declare abstract class Expression {
     readonly abstract nodeType: Token;
-    toJSON(full?: boolean): {};
+    toJSON(full?: boolean, human?: boolean): {};
     static createPackage(position: ExpressionPosition, args: any[]): PackageExpression;
     static createImport(position: ExpressionPosition, args: any[]): ImportExpression;
     static createRecord(position: ExpressionPosition, args: any[]): RecordExpression;
@@ -35,6 +35,7 @@ export declare class PackageExpression extends Expression {
     name: string;
     children: Expression[];
     nodeType: Token;
+    fileName: string;
     imports: ImportedPackageExpression[];
     constructor(position: ExpressionPosition, name: string, children: Expression[]);
 }
@@ -73,6 +74,7 @@ export declare class TypeExpression extends Expression {
     type: Type;
     nodeType: Token;
     constructor(position: ExpressionPosition, type: Type);
+    toJSON(full?: boolean, human?: boolean): any;
 }
 export declare class RecordTypeExpression extends Expression {
     position: ExpressionPosition;

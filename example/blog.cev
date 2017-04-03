@@ -1,6 +1,6 @@
 package main;
 
-import "./user";
+import "./user" as user;
 
 // A blog entry
 record Blog {

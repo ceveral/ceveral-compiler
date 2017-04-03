@@ -12,6 +12,10 @@ import * as Debug from 'debug';
 const debug = Debug('ceveral:preprocesser');
 import * as _ from 'lodash';
 
+function normalizePath(path:string) {
+    return path + (Path.extname(path) == "" ? ".cev" : '');
+}
+
 export interface PreprocessOptions {
     /**
      * Annotation validators for records
@@ -88,7 +92,7 @@ export class Preprocesser {
 
     private async import(item: ImportExpression, options: PreprocessOptions): Promise<ImportedPackageExpression> {
         let dirName = Path.dirname(options.fileName);
-        let path = Path.resolve(dirName, item.path + ".cev");
+        let path = Path.resolve(dirName, normalizePath(item.path));
 
         this.detectCircularDependencies(path);
 
@@ -113,7 +117,7 @@ export class Preprocesser {
         switch (exp.type.nodeType) {
             case Token.ImportType:
             case Token.MapType:
-            case Token.RecordType:
+            case Token.UserType:
             case Token.PrimitiveType: return exp.type;
             default: return this.getInner(exp.type as PropertyExpression);
         }

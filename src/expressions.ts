@@ -15,11 +15,28 @@ export interface ExpressionPosition {
 export abstract class Expression {
     abstract readonly nodeType: Token
 
-    toJSON(full: boolean = false) {
+    toJSON(full: boolean = false, human: boolean = false) {
         if (full === true) return this;
         return Object.keys(this)
             .filter((key) => ['position'].indexOf(key) < 0)
-            .reduce((newObj, key) => Object.assign(newObj, { [key]: this[key] }), {})
+            .reduce((newObj, key) => {
+                var val = this[key];
+                if (key === "nodeType" && human) {
+                    val = Token[val];
+                }
+
+                if (val instanceof Expression) {
+                    val = val.toJSON(full, human);
+                    //return Object.assign(newObj, {[key]: this[key].toJSON(full, human)});
+                } else if (Array.isArray(val)) {
+                    val = val.map(m => {
+                        if (m instanceof Expression) return m.toJSON(full, human);
+                        return m;
+                    })
+                }
+
+                return Object.assign(newObj, { [key]: val })
+            }, {})
     }
 
     static createPackage(position: ExpressionPosition, args: any[]) {
@@ -99,6 +116,7 @@ export abstract class Expression {
 
 export class PackageExpression extends Expression {
     nodeType = Token.Package;
+    fileName: string;
     imports: ImportedPackageExpression[];
     constructor(public position: ExpressionPosition, public name: string, public children: Expression[]) {
         super();
@@ -124,6 +142,7 @@ export abstract class AnnotatedExpression extends Expression {
         super();
     }
 
+    // Get annotation argument by name
     public get(name: string): string
     public get<T>(name: string): T {
         let found = this.annotations.find(m => m.name === name)
@@ -152,10 +171,16 @@ export class TypeExpression extends Expression {
     constructor(public position: ExpressionPosition, public type: Type) {
         super();
     }
+
+    toJSON(full: boolean = false, human: boolean = false) {
+        let json:any = super.toJSON(full, human);
+        if (human) json.type = Type[json.type];
+        return json;
+    }
 }
 
 export class RecordTypeExpression extends Expression {
-    nodeType = Token.RecordType;
+    nodeType = Token.UserType;
     constructor(public position: ExpressionPosition, public name: string) {
         super();
     }
@@ -252,7 +277,7 @@ export function createExpression(type: Token, position: ExpressionPosition, ...a
         case Token.Record: return Expression.createRecord(position, args);
         case Token.Property: return Expression.createProperty(position, args);
         case Token.PrimitiveType: return Expression.createType(position, args);
-        case Token.RecordType: return Expression.createRecordType(position, args);
+        case Token.UserType: return Expression.createRecordType(position, args);
         case Token.OptionalType: return Expression.createOptionalType(position, args);
         case Token.ImportType: return Expression.createImportType(position, args);
         case Token.RepeatedType: return Expression.createRepeatedType(position, args);

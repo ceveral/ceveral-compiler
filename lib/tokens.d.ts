@@ -9,7 +9,7 @@ export declare enum Token {
     RepeatedType = 8,
     MapType = 9,
     Annotation = 10,
-    RecordType = 11,
+    UserType = 11,
     Service = 12,
     Method = 13,
     AnonymousRecord = 14,
