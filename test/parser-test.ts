@@ -1,18 +1,22 @@
 import * as Parser from '../lib/parser';
-import {Token, Type} from '../lib/tokens';
-import {RecordExpression, TypeExpression} from '../lib/expressions'
+import { Token, Type } from '../lib/tokens';
+import { RecordExpression, TypeExpression } from '../lib/expressions'
 import * as should from 'should';
 
 
 describe('Parser', () => {
 
     it('should parse package', () => {
-        let ast = Parser.parse(`package main;`);
+        const check = (ast) => {
+            should(ast.nodeType).equal(Token.Package);
+            should(ast.children).be.null();
+            should(ast.name).equal('main');
+        }
 
-        should(ast.nodeType).equal(Token.Package);
-        should(ast.children).be.null();
-        should(ast.name).equal('main'); 
+        check(Parser.parse(`package main;`));
+        check(Parser.parse("package main "));
     });
+
 
     it('should parse message', () => {
         let ast = Parser.parse(`
@@ -25,7 +29,7 @@ describe('Parser', () => {
         should(ast.nodeType).equal(Token.Package);
         should(ast.children.length).equal(1);
 
-        let record  = ast.children[0] as RecordExpression;
+        let record = ast.children[0] as RecordExpression;
 
         should(record.nodeType).equal(Token.Record);
         should(record.name).equal("Name");
@@ -51,7 +55,7 @@ describe('Parser', () => {
             }
         `);
 
-        
+
     });
 
     it('should parse string enum', () => {
@@ -63,7 +67,7 @@ describe('Parser', () => {
             }
         `);
 
-       
+
     })
 
 });

@@ -5,10 +5,13 @@ const expressions_1 = require("../lib/expressions");
 const should = require("should");
 describe('Parser', () => {
     it('should parse package', () => {
-        let ast = Parser.parse(`package main;`);
-        should(ast.nodeType).equal(tokens_1.Token.Package);
-        should(ast.children).be.null();
-        should(ast.name).equal('main');
+        const check = (ast) => {
+            should(ast.nodeType).equal(tokens_1.Token.Package);
+            should(ast.children).be.null();
+            should(ast.name).equal('main');
+        };
+        check(Parser.parse(`package main;`));
+        check(Parser.parse("package main "));
     });
     it('should parse message', () => {
         let ast = Parser.parse(`

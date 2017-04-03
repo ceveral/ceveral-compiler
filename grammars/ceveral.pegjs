@@ -38,29 +38,20 @@ Elements
 
 Element
   = r:Record { return r; }
-  / e:EnumType { return e; }
+  / e:Enum { return e; }
   / i:Import { return i; }
   / s:Service { return s; }
 
 Package
-  =  __ "package" _+ p:alpha+ __ semi __   { return p.join(''); }
+  =  __ "package" _+ p:alpha+ eos __   { return p.join(''); }
 
 Import
-	=  __ "import" _+ quote n:import_statement+ quote __  semi __ {
+	=  __ "import" _+ quote n:import_statement+ quote eos __ {
 		return expression(Token.Import, n.join(''))
 	}
 
-/*
-Body
-	= r:Records { return r }
-
-Records
-	= __ recs:(  __ r:Record __ { return r; })+ { return recs; }
-*/
-
 Record
 	= a:(aa:Annotation __ { return aa;})* "record" _+ name:Identifier __ "{" __ body:RecordBody* __ "}" {
-		//return [Token.Record, name, a.concat(body)];
     return expression(Token.Record, name, a, body)
   }
 
@@ -82,12 +73,12 @@ PropertyType
 
 
 Type
-	= CompositeType
+	= ContainerType
   / t:ImportType { return t; }
 	/ t:PrimitiveType { return expression(Token.PrimitiveType, t) }
   / t:Identifier { return expression(Token.RecordType, t) }
 
-CompositeType
+ContainerType
   = ArrayType
   / MapType
 
@@ -122,29 +113,29 @@ ImportType
     return expression(Token.ImportType, p, t);
 	}
 
-EnumType 
-  = a:(aa:Annotation __ { return aa;})* "enum" __  i:Identifier __ "{" __ e:senum_members __  "}" {
+Enum 
+  = a:(aa:Annotation __ { return aa;})* "enum" __  i:Identifier __ "{" __ e:StringEnumMembers __  "}" {
     return expression(Token.StringEnum, i, a, e);
   } 
-  / a:(aa:Annotation __ { return aa;})* "enum" __  i:Identifier __ "{" __ e:nenum_members __  "}" {
+  / a:(aa:Annotation __ { return aa;})* "enum" __  i:Identifier __ "{" __ e:NumericEnumMembers __  "}" {
     return expression(Token.NumericEnum, i, a, e);
   }
 
-nenum_members
-  = e:nenum_member __ semi rest:(__ ee:nenum_member __ semi { return ee} )* {
+NumericEnumMembers
+  = e:NumericEnumMember __ semi rest:(__ ee:NumericEnumMember __ semi { return ee} )* {
     return flatten([e].concat(rest))
   }
 
-senum_members
-  = e:senum_member __ semi rest:(__ ee:senum_member __ semi { return ee} )* {
+StringEnumMembers
+  = e:StringEnumMember __ semi rest:(__ ee:StringEnumMember __ semi { return ee} )* {
     return flatten([e].concat(rest))
   }
 
-nenum_member
+NumericEnumMember
   = i:Identifier __ "=" __ d:DIGIT+ { return expression(Token.NumericEnumMember, i, parseInt(d.join('')))  }
   / i:Identifier { return expression(Token.NumericEnumMember, i, null) }
 
-senum_member
+StringEnumMember
   = i:Identifier __ "=" __ s:string { return expression(Token.StringEnumMember, i, s)  }
 
 Annotation
@@ -217,6 +208,10 @@ double_quote
 	= "\""
 semi
 	= ";";
+
+eos
+  = semi
+  / _+
 
 alpha
 	= [a-zA-Z]

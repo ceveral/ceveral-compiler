@@ -67,7 +67,7 @@ gulp.task('build', ['grammar', 'typescript']);
 gulp.task('watch', () => {
     gulp.watch(['src/**/*.ts'], ['typescript']);
     gulp.watch(['test/src/**/*.ts'], ['build:test']);
-    gulp.watch(['grammar/*.pegjs'], ['grammar'])
+    gulp.watch(['grammars/*.pegjs'], ['grammar'])
     gulp.watch(['test/*.ts'], ['build:test']);
 })
 
