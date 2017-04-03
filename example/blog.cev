@@ -1,13 +1,23 @@
 package main;
 
-import "./user" as user;
 
-// A blog entry
+enum Test {
+    Rapper = 1;
+}
+
+enum Test2 {
+    Rapper = "Hell, Yeah";
+}
+
+import "./user.cev"
+
+// Test
 record Blog {
-    title: string;
-    publish_date: date;
-    body: string;
-    author: User;
+    // Hello
+    title: string
+    publish_date: date
+    body: string
+    author: User
 }
 
 

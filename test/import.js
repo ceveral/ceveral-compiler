@@ -8,6 +8,5 @@ describe('imports', () => {
         let file = Path.join(__dirname, "fixtures/person.cev");
         let input = fs.readFileSync(file, 'utf8');
         let ast = Parser.parse(input);
-        console.log(ast);
     });
 });

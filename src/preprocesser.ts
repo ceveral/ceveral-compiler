@@ -100,7 +100,7 @@ export class Preprocesser {
 
         let ast: PackageExpression = Parser.parse(data.toString());
         if (!(ast instanceof PackageExpression)) {
-            throw Error('ERROR');
+            throw Error('fatal: this sould never happen');
         }
 
         let o = Object.assign({}, options, {

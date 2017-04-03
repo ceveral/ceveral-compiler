@@ -32,7 +32,7 @@ Program
   }
 
 Elements
-  = head:Element rest:(ws e:Element { return e; })* {
+  = head:Element rest:(__ e:Element { return e; })* {
     return [head].concat(rest);
   }
 
@@ -62,7 +62,7 @@ RecordBody
 
 
 Property
-	= a:(aa:Annotation __ { return aa;})* __ name:Identifier __ ":" __  type:PropertyType __ semi {
+	= a:(aa:Annotation __ { return aa;})* __ name:Identifier __ ":" __  type:PropertyType eos {
     return expression(Token.Property, name, a, type)
   }
 
@@ -122,12 +122,12 @@ Enum
   }
 
 NumericEnumMembers
-  = e:NumericEnumMember __ semi rest:(__ ee:NumericEnumMember __ semi { return ee} )* {
+  = e:NumericEnumMember eos rest:(__ ee:NumericEnumMember eos { return ee} )* {
     return flatten([e].concat(rest))
   }
 
 StringEnumMembers
-  = e:StringEnumMember __ semi rest:(__ ee:StringEnumMember __ semi { return ee} )* {
+  = e:StringEnumMember eos rest:(__ ee:StringEnumMember eos { return ee} )* {
     return flatten([e].concat(rest))
   }
 

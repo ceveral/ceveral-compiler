@@ -9,7 +9,7 @@ describe('imports', () => {
         let input = fs.readFileSync(file, 'utf8');
 
         let ast = Parser.parse(input);
-        console.log(ast);
+        
     })
 
 })
