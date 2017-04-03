@@ -29,9 +29,11 @@ export declare class Preprocesser {
     private validate(item, options?);
     private detectAmbiguities(item);
     private _detectAbiguities(item, memo);
-    private validateModel(record, imports, options?);
+    private validateModel(record, imports, options?, scope);
     private validateAnnotations(item, options);
-    private validateImport(item, imports);
+    private _getScope(item, memo);
+    private getScope(item);
+    private validateImport(item, imports, scope);
     private _validateImport(item, type, imports);
     private getModels(item);
     private getImports(item);

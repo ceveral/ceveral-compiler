@@ -1,7 +1,7 @@
 import { Token } from './tokens';
 import {
     Expression, StringEnumExpression, NumericEnumExpression,
-    PackageExpression, RecordExpression,
+    PackageExpression, RecordExpression, RecordTypeExpression,
     PropertyExpression, ImportedPackageExpression, ImportExpression, ImportTypeExpression
 } from './expressions';
 import { Validator } from './options/validator'
@@ -130,6 +130,8 @@ export class Preprocesser {
         let imports = this.getImports(item);
         let models = this.getModels(item);
 
+        let scope = this.getScope(item);
+
         let errors: Error[] = [];
 
         try {
@@ -139,7 +141,7 @@ export class Preprocesser {
         }
 
         for (let model of models) {
-            errors.push(...this.validateModel(model, imports, options));
+            errors.push(...this.validateModel(model, imports, options, scope));
         }
 
         if (errors.length) {
@@ -178,7 +180,7 @@ export class Preprocesser {
             memo[name] = true;
         }
     }
-    private validateModel(record: RecordExpression, imports: string[][], options?: PreprocessOptions) {
+    private validateModel(record: RecordExpression, imports: string[][], options?: PreprocessOptions, scope:{[key:string]:string}) {
         let errors: Error[] = [];
         if (options) {
             let e = this.validateAnnotations(record, options);
@@ -190,7 +192,7 @@ export class Preprocesser {
                 errors.push(...this.validateAnnotations(prop, options))
             }
 
-            errors.push(...this.validateImport(prop, imports));
+            errors.push(...this.validateImport(prop, imports, scope));
         }
 
         return errors;
@@ -218,7 +220,43 @@ export class Preprocesser {
         return errors;
     }
 
-    private validateImport(item: PropertyExpression, imports: string[][]) {
+    private _getScope(item:PackageExpression, memo: {[key:string]: string}) {
+
+        let ass = (item instanceof ImportedPackageExpression) ? item.as : undefined;
+        for (let child of item.children) {
+            let name = function (child: Expression) {
+                switch (child.nodeType) {
+                    case Token.Record: return (child as RecordExpression).name;
+                    case Token.StringEnum: return (child as StringEnumExpression).name;
+                    case Token.NumericEnum: return (child as NumericEnumExpression).name;
+                    default: return null;
+                }
+            }(child);
+
+            if (name === null) continue;
+
+            name = ass ? `${ass}.${name}` : name
+
+            if (memo[name]) throw new ValidationError(`type ${name} already defined in scope`);
+            memo[name] = item.fileName;
+        }
+    }
+
+    private getScope(item: PackageExpression) {
+        let memo:{[key:string]: string} = {};
+
+        this._getScope(item, memo);
+
+        for (let i of item.imports) {
+            this._getScope(i, memo);
+        }
+
+        return memo
+
+        
+    }
+
+    private validateImport(item: PropertyExpression, imports: string[][], scope:{[key:string]: string}) {
 
         let type = this.getInner(item)
         switch (type.nodeType) {
@@ -230,8 +268,12 @@ export class Preprocesser {
 
         if (type.nodeType != Token.UserType) return [];
         
-        console.log(type);
-
+        let name = (type as RecordTypeExpression).name;
+        if (!scope[name]) return [new ValidationError(`could not resolve type: ${name}`,<any>{
+                property: item.name,
+                type: name,
+                position: (<any>type).position
+            })];
         
         return [];
     }

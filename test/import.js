@@ -1,5 +1,4 @@
 "use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
 const Path = require("path");
 const fs = require("fs");
 const Parser = require("../lib/parser");

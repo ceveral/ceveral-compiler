@@ -18,6 +18,6 @@ let p = new Preprocesser();
 
 p.parse(ast, {fileName: path})
 .then( ast => {
-    //console.log(util.inspect(ast.toJSON(false, true), false, 10, true))
+    console.log(util.inspect(ast.toJSON(false, true), false, 10, true))
 }).catch(console.error.bind(console))
 

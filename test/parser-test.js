@@ -1,5 +1,4 @@
 "use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
 const Parser = require("../lib/parser");
 const tokens_1 = require("../lib/tokens");
 const expressions_1 = require("../lib/expressions");

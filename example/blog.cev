@@ -9,7 +9,7 @@ enum Test2 {
     Rapper = "Hell, Yeah";
 }
 
-import "./user.cev" as topper
+import "./user.cev"
 
 // Test
 record Blog {
