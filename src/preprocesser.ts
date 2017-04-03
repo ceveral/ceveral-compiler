@@ -1,18 +1,17 @@
-import {Token} from './tokens';
-import { PackageExpression, RecordExpression,
-     PropertyExpression, ImportedPackageExpression, ImportExpression
+import { Token } from './tokens';
+import {
+    Expression, StringEnumExpression, NumericEnumExpression,
+    PackageExpression, RecordExpression,
+    PropertyExpression, ImportedPackageExpression, ImportExpression, ImportTypeExpression
 } from './expressions';
-import {Validator} from './options/validator'
+import { Validator } from './options/validator'
 import * as Path from 'path';
 import * as Parser from './parser';
 import * as fs from 'mz/fs';
-import {flatten} from './utils';
-import {ValidationError,AnnotationValidationError} from './errors'
-import * as Debug from 'debug';
-const debug = Debug('ceveral:preprocesser');
+import { ValidationError, AnnotationValidationError } from './errors'
 import * as _ from 'lodash';
 
-function normalizePath(path:string) {
+function normalizePath(path: string) {
     return path + (Path.extname(path) == "" ? ".cev" : '');
 }
 
@@ -39,10 +38,10 @@ export class Preprocesser {
     private previousParent: string
 
     async parse(item: PackageExpression, optionsOrPath: PreprocessOptions) {
-        let options: PreprocessOptions = optionsOrPath||{fileName:null};
+        let options: PreprocessOptions = optionsOrPath || { fileName: null };
 
-        if (typeof optionsOrPath === 'string') {
-            options = {fileName: optionsOrPath};
+        if (typeof optionsOrPath === 'string') {
+            options = { fileName: optionsOrPath };
         }
 
         if (!options.fileName) throw new Error('You must provide a fileName');
@@ -54,7 +53,7 @@ export class Preprocesser {
     }
 
 
-    private async process(item: PackageExpression, options: PreprocessOptions): Promise<ImportedPackageExpression> {
+    private async process(item: PackageExpression, options: PreprocessOptions): Promise<PackageExpression> {
         if (!item) return null;
 
 
@@ -62,22 +61,23 @@ export class Preprocesser {
             throw new Error('Expression not a package');
         }
 
-        let e = item as ImportedPackageExpression;
-        e.imports = [];
+        /*let e = item as PackageExpression;
+        e.imports = [];*/
+        item.imports = [];
 
         let children = [];
-        for (let i = 0, len = e.children.length; i < len; i++) {
-            let child = e.children[i];
+        for (let i = 0, len = item.children.length; i < len; i++) {
+            let child = item.children[i];
             if (child.nodeType !== Token.Import) {
                 children.push(child)
                 continue
             }
 
-            e.imports.push(await this.import(child as ImportExpression, options));
+            item.imports.push(await this.import(child as ImportExpression, options));
         }
-        e.children = children;
-        e.fileName = options.fileName;
-        return e;
+        item.children = children;
+        item.fileName = options.fileName;
+        return item;
     }
 
     private detectCircularDependencies(path: string) {
@@ -107,13 +107,16 @@ export class Preprocesser {
             fileName: path
         });
 
-        let p: ImportedPackageExpression = await this.parse(ast, o);
+        let p: PackageExpression = await this.parse(ast, o);
 
-        return p;
+        let i = new ImportedPackageExpression(p);
+        i.as = item.as;
+
+        return i;
 
     }
 
-    private getInner(exp: PropertyExpression) {
+    private getInner(exp: PropertyExpression): Expression {
         switch (exp.type.nodeType) {
             case Token.ImportType:
             case Token.MapType:
@@ -128,15 +131,53 @@ export class Preprocesser {
         let models = this.getModels(item);
 
         let errors: Error[] = [];
+
+        try {
+            this.detectAmbiguities(item);
+        } catch (e) {
+            errors.push(e);
+        }
+
         for (let model of models) {
             errors.push(...this.validateModel(model, imports, options));
         }
 
         if (errors.length) {
-            throw new ValidationError("errors", errors);
+            throw new ValidationError("ValidationError", errors);
         }
     }
 
+    private detectAmbiguities(item: PackageExpression) {
+        let memo: { [key: string]: boolean } = {};
+        
+        this._detectAbiguities(item, memo);
+
+        for (let i of item.imports) {
+            this._detectAbiguities(i, memo);
+        }
+        
+    }
+
+    private _detectAbiguities(item: PackageExpression, memo: { [key: string]: boolean }) {
+        let ass = (item instanceof ImportedPackageExpression) ? item.as||item.name : item.name;
+        for (let child of item.children) {
+            let name = function (child: Expression) {
+                switch (child.nodeType) {
+                    case Token.Record: return (child as RecordExpression).name;
+                    case Token.StringEnum: return (child as StringEnumExpression).name;
+                    case Token.NumericEnum: return (child as NumericEnumExpression).name;
+                    default: return null;
+                }
+            }(child);
+
+            if (name === null) continue;
+
+            name = ass ? `${ass}.${name}` : name
+
+            if (memo[name]) throw new Error(`type ${name} already defined in scope`);
+            memo[name] = true;
+        }
+    }
     private validateModel(record: RecordExpression, imports: string[][], options?: PreprocessOptions) {
         let errors: Error[] = [];
         if (options) {
@@ -180,17 +221,32 @@ export class Preprocesser {
     private validateImport(item: PropertyExpression, imports: string[][]) {
 
         let type = this.getInner(item)
-        if (type.nodeType !== Token.ImportType) return [];
+        switch (type.nodeType) {
+            case Token.ImportType:
+                return this._validateImport(item, type as ImportTypeExpression, imports);
+            case Token.PrimitiveType:
+                return [];
+        }
 
+        if (type.nodeType != Token.UserType) return [];
+        
+        console.log(type);
+
+        
+        return [];
+    }
+
+    private _validateImport(item:PropertyExpression, type: ImportTypeExpression , imports: string[][]) {
         let found = !!imports.find(m => m[0] == type.packageName && m[1] == type.name);
-    
+
         if (!found) {
-            return [new ValidationError(`imported usertype: "${type.packageName}.${type.name}", could not be resolved`, {
+            return [new ValidationError(`imported usertype: "${type.packageName}.${type.name}", could not be resolved`, <any>{
                 property: item.name,
                 type: type.name,
                 position: type.position
             })];
         }
+
         return [];
     }
 
@@ -203,9 +259,9 @@ export class Preprocesser {
     private getImports(item: PackageExpression) {
         let include = [Token.Record, Token.StringEnum, Token.NumericEnum]
         let imports = item.imports.map(m => {
-            return m.children.filter(mm => include.indexOf(mm.nodeType) > -1).map(mm => [m.name, (mm as RecordExpression).name]);
+            return m.children.filter(mm => include.indexOf(mm.nodeType) > -1).map(mm => [m.as||m.name, (mm as RecordExpression).name]);
         });
-        
+
         return _.flatten(imports)
 
     }

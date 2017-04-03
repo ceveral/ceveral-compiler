@@ -40,7 +40,8 @@ export declare class PackageExpression extends Expression {
     constructor(position: ExpressionPosition, name: string, children: Expression[]);
 }
 export declare class ImportedPackageExpression extends PackageExpression {
-    fileName: string;
+    as: string;
+    constructor(p: PackageExpression);
 }
 export declare class ImportExpression extends Expression {
     position: ExpressionPosition;

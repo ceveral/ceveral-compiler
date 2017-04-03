@@ -1,6 +1,6 @@
 
 import { Preprocesser, PreprocessOptions } from './preprocesser'
-import { ImportedPackageExpression } from './expressions'
+import { PackageExpression } from './expressions'
 import * as Parser from './parser';
 import {isString} from './utils';
 
@@ -10,7 +10,7 @@ export interface IResult {
 }
 
 export interface CodeGenerator {
-    transform(ast:ImportedPackageExpression, options:TranspileOptions): Promise<IResult[]>
+    transform(ast:PackageExpression, options:TranspileOptions): Promise<IResult[]>
 }
 
 export interface TranspileOptions extends PreprocessOptions {
@@ -21,7 +21,7 @@ export class Transpiler {
     pre: Preprocesser = new Preprocesser();
 
     ast(input: string, optionsOrFileName?: PreprocessOptions|string) {
-        return new Promise<ImportedPackageExpression>((resolve, reject) => {
+        return new Promise<PackageExpression>((resolve, reject) => {
             let output = Parser.parse(input);
 
             let o:PreprocessOptions;
@@ -35,7 +35,7 @@ export class Transpiler {
         });
     }
 
-    async transpile(input:string|ImportedPackageExpression, transformer:CodeGenerator, options?:TranspileOptions) {
+    async transpile(input:string|PackageExpression, transformer:CodeGenerator, options?:TranspileOptions) {
 
         let ast = isString(input) ? (await this.ast(input, options)) : input;
         let result = await transformer.transform(ast, options);

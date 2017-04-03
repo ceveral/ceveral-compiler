@@ -125,7 +125,12 @@ export class PackageExpression extends Expression {
 }
 
 export class ImportedPackageExpression extends PackageExpression {
-    fileName: string;
+    as: string;
+    constructor(p:PackageExpression) {
+        super(p.position, p.name, p.children);
+        this.imports = p.imports;
+        this.fileName = p.fileName;
+    }
 }
 
 export class ImportExpression extends Expression {
