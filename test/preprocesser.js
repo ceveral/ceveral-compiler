@@ -1,4 +1,5 @@
 "use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
 const lib_1 = require("../lib");
 const Parser = require("../lib/parser");
 const fs = require("fs");

@@ -1,6 +1,7 @@
 package main;
 
 import "./address";
+import "./address" as address;
 
 record Person {
     name: string;

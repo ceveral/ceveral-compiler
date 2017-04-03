@@ -46,8 +46,8 @@ Package
   =  __ "package" _+ p:alpha+ eos __   { return p.join(''); }
 
 Import
-	=  __ "import" _+ quote n:import_statement+ quote eos __ {
-		return expression(Token.Import, n.join(''))
+	=  __ "import" _+ quote n:import_statement+ quote as:(__ "as" __ i:Identifier { return i;})? eos __ {
+		return expression(Token.Import, n.join(''), as);
 	}
 
 Record

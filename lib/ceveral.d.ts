@@ -9,9 +9,9 @@ export interface AstOptions extends TransformOptions {
 export declare class Ceveral {
     repository: Repository;
     transpiler: Transpiler;
-    private _initialized;
+    private _once;
     constructor();
     transform(input: string, options: TransformOptions): Promise<IResult[]>;
-    setup(): Promise<void>;
+    private _initialize();
     private _getTransformers(q);
 }

@@ -44,8 +44,9 @@ export declare class ImportedPackageExpression extends PackageExpression {
 export declare class ImportExpression extends Expression {
     position: ExpressionPosition;
     path: string;
+    as: string;
     nodeType: Token;
-    constructor(position: ExpressionPosition, path: string);
+    constructor(position: ExpressionPosition, path: string, as: string);
 }
 export declare abstract class AnnotatedExpression extends Expression {
     annotations: AnnotationExpression[];

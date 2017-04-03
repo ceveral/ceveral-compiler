@@ -1,5 +1,6 @@
 import { Repository, getAnnotationValidations, TransformerDescription } from './repository';
 import { Transpiler, IResult } from './transpiler'
+import { Once } from './utils';
 
 export interface TransformOptions {
     transformers: string[]
@@ -9,42 +10,43 @@ export interface TransformOptions {
 export interface AstOptions extends TransformOptions {
 }
 
+
+
+
 export class Ceveral {
     repository = new Repository();
     transpiler = new Transpiler();
-    private _initialized: boolean = false;
-    constructor() {
 
+    private _once: Once<void>;
+
+    constructor() {
+        this._once = new Once<void>(this._initialize.bind(this));
     }
 
     async transform(input: string, options: TransformOptions) {
-        
-        if (!this._initialized) throw new Error('ceveral is not setup yet.');
+
+        await this._once.call();
+
+        //if (!this._initialized) throw new Error('ceveral is not setup yet.');
         if (!options.transformers) throw new Error('for transformers');
 
         let transformers = this._getTransformers(options.transformers);
-        
+
         let files: IResult[] = [];
         for (let transformer of transformers) {
-            let opts = getAnnotationValidations(transformer)||{fileName:options.fileName};
-            opts.fileName = opts.fileName||options.fileName;
+            let opts = getAnnotationValidations(transformer) || { fileName: options.fileName };
+            opts.fileName = opts.fileName || options.fileName;
             let results = await this.transpiler.transpile(input, transformer, opts);
             if (results) {
                 files.push(...results)
             }
         }
-        
+
         return files;
     }
 
-    setup() {
-        if (this._initialized) {
-            return;
-        }
+    private _initialize() {
         return this.repository.loadTransformers()
-            .then(() => {
-                this._initialized = true;
-            });
     }
 
     private _getTransformers(q: string[]): TransformerDescription[] {
@@ -60,8 +62,8 @@ export class Ceveral {
         });
 
         if (notfound.length) {
-            throw new Error(`Could not find template: ${notfound.join(', ')}`)
+            throw new Error(`could not find ${notfound.length > 1 ? 'templates' : 'template'}: ${notfound.join(', ')}`)
         }
         return transformers;
-     }
+    }
 }

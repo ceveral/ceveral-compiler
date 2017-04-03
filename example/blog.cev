@@ -1,0 +1,16 @@
+package main;
+
+import "./user";
+
+// A blog entry
+record Blog {
+    title: string;
+    publish_date: date;
+    body: string;
+    author: User;
+}
+
+
+
+
+

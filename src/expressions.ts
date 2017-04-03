@@ -27,7 +27,7 @@ export abstract class Expression {
     }
 
     static createImport(position: ExpressionPosition, args: any[]) {
-        return new ImportExpression(position, args[0]);
+        return new ImportExpression(position, args[0], args[1]);
     }
 
     static createRecord(position: ExpressionPosition, args: any[]) {
@@ -113,7 +113,7 @@ export class ImportedPackageExpression extends PackageExpression {
 export class ImportExpression extends Expression {
     nodeType = Token.Import;
 
-    constructor(public position: ExpressionPosition, public path: string) {
+    constructor(public position: ExpressionPosition, public path: string, public as: string) {
         super();
     }
 }

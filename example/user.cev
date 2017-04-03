@@ -1,0 +1,13 @@
+package main;
+
+enum Sex {
+    Male = "male";
+    Female = "female";
+}
+
+record User {
+    first_name: string;
+    last_name: string;
+    birthday: date;
+    sex: Sex;
+}
