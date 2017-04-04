@@ -16,7 +16,10 @@ function normalizePath(path: string) {
 }
 
 type Scope = {[key:string]: string};
-
+interface Context {
+    parent: string;
+    previousParent: string;
+}
 export interface PreprocessOptions {
     /**
      * Annotation validators for records
@@ -36,9 +39,7 @@ export interface PreprocessOptions {
 // Validate Services
 // Validate Enum
 export class Preprocesser {
-    private parent: string;
-    private previousParent: string
-
+    
     async parse(item: PackageExpression, optionsOrPath: PreprocessOptions) {
         let options: PreprocessOptions = optionsOrPath || { fileName: null };
 
@@ -47,15 +48,21 @@ export class Preprocesser {
         }
 
         if (!options.fileName) throw new Error('You must provide a fileName');
-
-        let pack = await this.process(item, options)
+        let ctx = {parent:null,previousParent:null};
+        let pack = await this.process(item, options, ctx)
         this.validate(pack, options);
 
         return pack;
     }
 
+    private async _parse(item: PackageExpression, options:PreprocessOptions, ctx: Context) {
+        let pack = await this.process(item, options, ctx)
+        this.validate(pack, options);
+        return pack
+    }
 
-    private async process(item: PackageExpression, options: PreprocessOptions): Promise<PackageExpression> {
+
+    private async process(item: PackageExpression, options: PreprocessOptions, ctx: Context): Promise<PackageExpression> {
         if (!item) return null;
 
 
@@ -63,11 +70,8 @@ export class Preprocesser {
             throw new Error('Expression not a package');
         }
 
-        /*let e = item as PackageExpression;
-        e.imports = [];*/
-        item.imports = [];
-
         let children = [];
+        let imports = [];
         for (let i = 0, len = item.children.length; i < len; i++) {
             let child = item.children[i];
             if (child.nodeType !== Token.Import) {
@@ -75,28 +79,30 @@ export class Preprocesser {
                 continue
             }
 
-            item.imports.push(await this.import(child as ImportExpression, options));
+            imports.push(this.import(child as ImportExpression, options, ctx));
         }
+
+        item.imports = await Promise.all(imports);
         item.children = children;
         item.fileName = options.fileName;
         return item;
     }
 
-    private detectCircularDependencies(path: string) {
-        if (this.previousParent == path) {
-            let e = `circle dependencies detected: ${Path.basename(path)} and ${Path.basename(this.parent)} depends on eachother`;
+    private detectCircularDependencies(path: string, ctx: Context) {
+        if (ctx.previousParent == path) {
+            let e = `circle dependencies detected: ${Path.basename(path)} and ${Path.basename(ctx.parent)} depends on eachother`;
             throw new Error(e);
         }
-        this.previousParent = this.parent
-        this.parent = path;
+        ctx.previousParent = ctx.parent
+        ctx.parent = path;
     }
 
 
-    private async import(item: ImportExpression, options: PreprocessOptions): Promise<ImportedPackageExpression> {
+    private async import(item: ImportExpression, options: PreprocessOptions, ctx: Context): Promise<ImportedPackageExpression> {
         let dirName = Path.dirname(options.fileName);
         let path = Path.resolve(dirName, normalizePath(item.path));
 
-        this.detectCircularDependencies(path);
+        this.detectCircularDependencies(path, ctx);
 
         let data = await fs.readFile(path);
 
@@ -109,7 +115,7 @@ export class Preprocesser {
             fileName: path
         });
 
-        let p: PackageExpression = await this.parse(ast, o);
+        let p: PackageExpression = await this._parse(ast, o, ctx);
 
         let i = new ImportedPackageExpression(p);
         i.as = item.as;
@@ -132,9 +138,8 @@ export class Preprocesser {
         let imports = this.getImports(item);
         let models = this.getModels(item);
 
-        let scope: Scope;
-
-        let errors: Error[] = [];
+        let scope: Scope,
+            errors: Error[] = [];
 
         try {
             scope  = this.getScope(item);
@@ -151,38 +156,6 @@ export class Preprocesser {
         }
     }
 
-    /*private detectAmbiguities(item: PackageExpression) {
-        let memo: { [key: string]: boolean } = {};
-
-        this._detectAbiguities(item, memo);
-
-        for (let i of item.imports) {
-            this._detectAbiguities(i, memo);
-        }
-
-    }
-
-    private _detectAbiguities(item: PackageExpression, memo: { [key: string]: boolean }) {
-        let ass = (item instanceof ImportedPackageExpression) ? item.as || item.name : item.name;
-        for (let child of item.children) {
-            let name = function (child: Expression) {
-                switch (child.nodeType) {
-                    case Token.Record: return (child as RecordExpression).name;
-                    case Token.StringEnum: return (child as StringEnumExpression).name;
-                    case Token.NumericEnum: return (child as NumericEnumExpression).name;
-                    default: return null;
-                }
-            }(child);
-
-            if (name === null) continue;
-
-            name = ass ? `${ass}.${name}` : name
-
-            if (memo[name]) throw new Error(`type ${name} already defined in scope`);
-            memo[name] = true;
-        }
-    }*/
-
     private validateModel(record: RecordExpression, imports: string[][], options: PreprocessOptions = null, scope: Scope) {
         let errors: Error[] = [];
         if (options) {
@@ -195,7 +168,7 @@ export class Preprocesser {
                 errors.push(...this.validateAnnotations(prop, options))
             }
 
-            errors.push(...this.validateImport(prop, imports, scope));
+            errors.push(...this.validateType(prop, imports, scope));
         }
 
         return errors;
@@ -224,7 +197,7 @@ export class Preprocesser {
     }
 
     private _getScope(item: PackageExpression, memo: Scope) {
-
+    
         let ass = (item instanceof ImportedPackageExpression) ? item.as : undefined;
         for (let child of item.children) {
             let name = function (child: Expression) {
@@ -237,7 +210,6 @@ export class Preprocesser {
             }(child);
 
             if (name === null) continue;
-
             name = ass ? `${ass}.${name}` : name
 
             if (memo[name]) throw new ValidationError(`type ${name} already defined in scope`);
@@ -256,7 +228,8 @@ export class Preprocesser {
 
     }
 
-    private validateImport(item: PropertyExpression, imports: string[][], scope: Scope) {
+    // Validate a property type
+    private validateType(item: PropertyExpression, imports: string[][], scope: Scope) {
 
         let type = this.getInner(item)
         switch (type.nodeType) {
@@ -278,6 +251,8 @@ export class Preprocesser {
         return [];
     }
 
+    // Validate an imported type 
+    // TODO: refactor to use scope
     private _validateImport(item: PropertyExpression, type: ImportTypeExpression, imports: string[][]) {
         let found = !!imports.find(m => m[0] == type.packageName && m[1] == type.name);
 

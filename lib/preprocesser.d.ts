@@ -19,19 +19,18 @@ export interface PreprocessOptions {
     fileName: string;
 }
 export declare class Preprocesser {
-    private parent;
-    private previousParent;
     parse(item: PackageExpression, optionsOrPath: PreprocessOptions): Promise<PackageExpression>;
-    private process(item, options);
-    private detectCircularDependencies(path);
-    private import(item, options);
+    private _parse(item, options, ctx);
+    private process(item, options, ctx);
+    private detectCircularDependencies(path, ctx);
+    private import(item, options, ctx);
     private getInner(exp);
     private validate(item, options?);
     private validateModel(record, imports, options, scope);
     private validateAnnotations(item, options);
     private _getScope(item, memo);
     private getScope(item);
-    private validateImport(item, imports, scope);
+    private validateType(item, imports, scope);
     private _validateImport(item, type, imports);
     private getModels(item);
     private getImports(item);
