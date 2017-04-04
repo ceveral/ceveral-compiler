@@ -20,7 +20,3 @@ record Blog {
     author: User
 }
 
-
-
-
-

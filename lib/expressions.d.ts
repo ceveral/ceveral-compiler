@@ -9,14 +9,16 @@ export interface ExpressionPosition {
     end: Position;
 }
 export declare abstract class Expression {
+    position: ExpressionPosition;
     readonly abstract nodeType: Token;
     toJSON(full?: boolean, human?: boolean): {};
+    constructor(position: ExpressionPosition);
     static createPackage(position: ExpressionPosition, args: any[]): PackageExpression;
     static createImport(position: ExpressionPosition, args: any[]): ImportExpression;
     static createRecord(position: ExpressionPosition, args: any[]): RecordExpression;
     static createProperty(position: ExpressionPosition, args: any[]): PropertyExpression;
     static createType(position: ExpressionPosition, args: any[]): TypeExpression;
-    static createRecordType(position: ExpressionPosition, args: any[]): RecordTypeExpression;
+    static createUserType(position: ExpressionPosition, args: any[]): UserTypeExpression;
     static createOptionalType(position: ExpressionPosition, args: any[]): OptionalTypeExpression;
     static createImportType(position: ExpressionPosition, args: any[]): ImportTypeExpression;
     static createRepeatedType(position: ExpressionPosition, args: any[]): RepeatedTypeExpression;
@@ -53,18 +55,16 @@ export declare class ImportExpression extends Expression {
 export declare abstract class AnnotatedExpression extends Expression {
     annotations: AnnotationExpression[];
     abstract nodeType: Token;
-    constructor(annotations: AnnotationExpression[]);
+    constructor(position: ExpressionPosition, annotations: AnnotationExpression[]);
     get(name: string): string;
 }
 export declare class RecordExpression extends AnnotatedExpression {
-    position: ExpressionPosition;
     name: string;
     properties: PropertyExpression[];
     nodeType: Token;
     constructor(position: ExpressionPosition, name: string, annotations: AnnotationExpression[], properties: PropertyExpression[]);
 }
 export declare class PropertyExpression extends AnnotatedExpression {
-    position: ExpressionPosition;
     name: string;
     type: Expression;
     nodeType: Token;
@@ -77,47 +77,40 @@ export declare class TypeExpression extends Expression {
     constructor(position: ExpressionPosition, type: Type);
     toJSON(full?: boolean, human?: boolean): any;
 }
-export declare class RecordTypeExpression extends Expression {
-    position: ExpressionPosition;
+export declare class UserTypeExpression extends Expression {
     name: string;
     nodeType: Token;
     constructor(position: ExpressionPosition, name: string);
 }
 export declare class OptionalTypeExpression extends Expression {
-    position: ExpressionPosition;
     type: Expression;
     nodeType: Token;
     constructor(position: ExpressionPosition, type: Expression);
 }
 export declare class ImportTypeExpression extends Expression {
-    position: ExpressionPosition;
     packageName: string;
     name: string;
     nodeType: Token;
     constructor(position: ExpressionPosition, packageName: string, name: string);
 }
 export declare class RepeatedTypeExpression extends Expression {
-    position: ExpressionPosition;
     type: Expression;
     nodeType: Token;
     constructor(position: ExpressionPosition, type: Expression);
 }
 export declare class MapTypeExpression extends Expression {
-    position: ExpressionPosition;
     key: Expression;
     value: Expression;
     nodeType: Token;
     constructor(position: ExpressionPosition, key: Expression, value: Expression);
 }
 export declare class AnnotationExpression extends Expression {
-    position: ExpressionPosition;
     name: string;
     args: any;
     nodeType: Token;
     constructor(position: ExpressionPosition, name: string, args: any);
 }
 export declare class MethodExpression extends AnnotatedExpression {
-    position: ExpressionPosition;
     name: string;
     parameter: Expression;
     returns: Expression;
@@ -125,7 +118,6 @@ export declare class MethodExpression extends AnnotatedExpression {
     constructor(position: ExpressionPosition, name: string, annotations: AnnotationExpression[], parameter: Expression, returns: Expression);
 }
 export declare class ServiceExpression extends AnnotatedExpression {
-    position: ExpressionPosition;
     name: string;
     annotations: AnnotationExpression[];
     methods: MethodExpression[];
@@ -133,13 +125,11 @@ export declare class ServiceExpression extends AnnotatedExpression {
     constructor(position: ExpressionPosition, name: string, annotations: AnnotationExpression[], methods: MethodExpression[]);
 }
 export declare class AnonymousRecordExpression extends Expression {
-    position: ExpressionPosition;
     properties: PropertyExpression[];
     nodeType: Token;
     constructor(position: ExpressionPosition, properties: PropertyExpression[]);
 }
 export declare class NumericEnumExpression extends AnnotatedExpression {
-    position: ExpressionPosition;
     name: string;
     annotations: AnnotationExpression[];
     members: NumericEnumMemberExpression[];
@@ -147,14 +137,12 @@ export declare class NumericEnumExpression extends AnnotatedExpression {
     constructor(position: ExpressionPosition, name: string, annotations: AnnotationExpression[], members: NumericEnumMemberExpression[]);
 }
 export declare class NumericEnumMemberExpression extends Expression {
-    position: ExpressionPosition;
     name: string;
     value: number;
     nodeType: Token;
     constructor(position: ExpressionPosition, name: string, value: number);
 }
 export declare class StringEnumExpression extends AnnotatedExpression {
-    position: ExpressionPosition;
     name: string;
     annotations: AnnotationExpression[];
     members: StringEnumMemberExpression[];
@@ -162,7 +150,6 @@ export declare class StringEnumExpression extends AnnotatedExpression {
     constructor(position: ExpressionPosition, name: string, annotations: AnnotationExpression[], members: StringEnumMemberExpression[]);
 }
 export declare class StringEnumMemberExpression extends Expression {
-    position: ExpressionPosition;
     name: string;
     value: string;
     nodeType: Token;

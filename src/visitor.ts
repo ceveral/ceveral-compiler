@@ -1,10 +1,10 @@
-import {Token} from './tokens';
+import { Token } from './tokens';
 import {
     Expression, PackageExpression, RecordExpression,
     AnnotationExpression, PropertyExpression, TypeExpression, ImportTypeExpression,
     RepeatedTypeExpression, OptionalTypeExpression,
-    MapTypeExpression, RecordTypeExpression,
-    ServiceExpression, MethodExpression, AnonymousRecordExpression, 
+    MapTypeExpression, UserTypeExpression,
+    ServiceExpression, MethodExpression, AnonymousRecordExpression,
     NumericEnumExpression, NumericEnumMemberExpression, StringEnumExpression, StringEnumMemberExpression
 } from './expressions';
 
@@ -14,20 +14,21 @@ export interface IVisitor {
     // Records 
     visitRecord(expression: RecordExpression): any;
     visitProperty(expression: PropertyExpression): any;
-    visitType(expression: TypeExpression): any;
-    visitUserType(expression: RecordTypeExpression): any
-    visitImportType(expression: ImportTypeExpression): any;
-    visitOptionalType(expression: OptionalTypeExpression): any;
-    visitRepeatedType(expression: RepeatedTypeExpression): any;
-    visitMapType(expression: MapTypeExpression): any;
-    
+    // Enums
     visitNumericEnum(expression: NumericEnumExpression): any;
     visitNumericEnumMember(expression: NumericEnumMemberExpression): any;
     visitStringEnum(expression: StringEnumExpression): any;
     visitStringEnumMember(expression: StringEnumMemberExpression): any;
-
+    // Types
+    visitType(expression: TypeExpression): any;
+    visitUserType(expression: UserTypeExpression): any
+    visitImportType(expression: ImportTypeExpression): any;
+    visitMapType(expression: MapTypeExpression): any;
+    // Modifiers
+    visitOptionalType(expression: OptionalTypeExpression): any;
+    visitRepeatedType(expression: RepeatedTypeExpression): any;
+    // Annotations
     visitAnnotation(expression: AnnotationExpression): any
-
     // Services
     visitService(expression: ServiceExpression): any;
     visitMethod(expression: MethodExpression): any;
@@ -43,13 +44,13 @@ export abstract class BaseVisitor implements IVisitor {
             case Token.Package: return this.visitPackage(expression as PackageExpression);
             case Token.Record: return this.visitRecord(expression as RecordExpression);
             case Token.Property: return this.visitProperty(expression as PropertyExpression);
-            case Token.UserType: return this.visitUserType(expression as RecordTypeExpression);
+            case Token.UserType: return this.visitUserType(expression as UserTypeExpression);
             case Token.PrimitiveType: return this.visitType(expression as TypeExpression);
             case Token.ImportType: return this.visitImportType(expression as ImportTypeExpression);
             case Token.OptionalType: return this.visitOptionalType(expression as OptionalTypeExpression);
             case Token.RepeatedType: return this.visitRepeatedType(expression as RepeatedTypeExpression);
             case Token.MapType: return this.visitMapType(expression as MapTypeExpression);
-            
+
             case Token.NumericEnum: return this.visitNumericEnum(expression as NumericEnumExpression);
             case Token.NumericEnumMember: return this.visitNumericEnumMember(expression as NumericEnumMemberExpression);
             case Token.StringEnum: return this.visitStringEnum(expression as StringEnumExpression);
@@ -64,7 +65,7 @@ export abstract class BaseVisitor implements IVisitor {
 
     }
 
-    visitUserType(expression: RecordTypeExpression): any {
+    visitUserType(expression: UserTypeExpression): any {
         return expression.name;
     }
 

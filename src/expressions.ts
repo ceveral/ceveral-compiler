@@ -39,6 +39,8 @@ export abstract class Expression {
             }, {})
     }
 
+    constructor(public position:ExpressionPosition) {}
+
     static createPackage(position: ExpressionPosition, args: any[]) {
         return new PackageExpression(position, args[0], args[1]);
     }
@@ -60,8 +62,8 @@ export abstract class Expression {
         return new TypeExpression(position, args[0]);
     }
 
-    static createRecordType(position: ExpressionPosition, args: any[]) {
-        return new RecordTypeExpression(position, args[0]);
+    static createUserType(position: ExpressionPosition, args: any[]) {
+        return new UserTypeExpression(position, args[0]);
     }
 
     static createOptionalType(position: ExpressionPosition, args: any[]) {
@@ -137,14 +139,14 @@ export class ImportExpression extends Expression {
     nodeType = Token.Import;
 
     constructor(public position: ExpressionPosition, public path: string, public as: string) {
-        super();
+        super(position);
     }
 }
 
 export abstract class AnnotatedExpression extends Expression {
     abstract nodeType: Token;
-    constructor(public annotations: AnnotationExpression[]) {
-        super();
+    constructor(position: ExpressionPosition, public annotations: AnnotationExpression[]) {
+        super(position);
     }
 
     // Get annotation argument by name
@@ -157,16 +159,16 @@ export abstract class AnnotatedExpression extends Expression {
 
 export class RecordExpression extends AnnotatedExpression {
     nodeType = Token.Record;
-    constructor(public position: ExpressionPosition, public name: string, annotations: AnnotationExpression[], public properties: PropertyExpression[]) {
-        super(annotations);
+    constructor(position: ExpressionPosition, public name: string, annotations: AnnotationExpression[], public properties: PropertyExpression[]) {
+        super(position, annotations);
 
     }
 }
 
 export class PropertyExpression extends AnnotatedExpression {
     nodeType = Token.Property;
-    constructor(public position: ExpressionPosition, public name: string, annotations: AnnotationExpression[], public type: Expression) {
-        super(annotations);
+    constructor(position: ExpressionPosition, public name: string, annotations: AnnotationExpression[], public type: Expression) {
+        super(position,annotations);
     }
 
 }
@@ -174,7 +176,7 @@ export class PropertyExpression extends AnnotatedExpression {
 export class TypeExpression extends Expression {
     nodeType = Token.PrimitiveType;
     constructor(public position: ExpressionPosition, public type: Type) {
-        super();
+        super(position);
     }
 
     toJSON(full: boolean = false, human: boolean = false) {
@@ -184,94 +186,94 @@ export class TypeExpression extends Expression {
     }
 }
 
-export class RecordTypeExpression extends Expression {
+export class UserTypeExpression extends Expression {
     nodeType = Token.UserType;
-    constructor(public position: ExpressionPosition, public name: string) {
-        super();
+    constructor(position: ExpressionPosition, public name: string) {
+        super(position);
     }
 }
 
 export class OptionalTypeExpression extends Expression {
     nodeType = Token.OptionalType;
-    constructor(public position: ExpressionPosition, public type: Expression) {
-        super();
+    constructor(position: ExpressionPosition, public type: Expression) {
+        super(position);
     }
 }
 
 export class ImportTypeExpression extends Expression {
     nodeType = Token.ImportType;
-    constructor(public position: ExpressionPosition, public packageName: string, public name: string) {
-        super();
+    constructor(position: ExpressionPosition, public packageName: string, public name: string) {
+        super(position);
     }
 }
 
 export class RepeatedTypeExpression extends Expression {
     nodeType = Token.RepeatedType;
-    constructor(public position: ExpressionPosition, public type: Expression) {
-        super();
+    constructor(position: ExpressionPosition, public type: Expression) {
+        super(position);
     }
 }
 
 export class MapTypeExpression extends Expression {
     nodeType = Token.MapType;
-    constructor(public position: ExpressionPosition, public key: Expression, public value: Expression) {
-        super();
+    constructor(position: ExpressionPosition, public key: Expression, public value: Expression) {
+        super(position);
     }
 }
 
 export class AnnotationExpression extends Expression {
     nodeType = Token.Annotation;
-    constructor(public position: ExpressionPosition, public name: string, public args: any) {
-        super();
+    constructor(position: ExpressionPosition, public name: string, public args: any) {
+        super(position);
     }
 }
 
 export class MethodExpression extends AnnotatedExpression {
     nodeType = Token.Method;
-    constructor(public position: ExpressionPosition, public name: string, annotations: AnnotationExpression[], public parameter: Expression, public returns: Expression) {
-        super(annotations);
+    constructor(position: ExpressionPosition, public name: string, annotations: AnnotationExpression[], public parameter: Expression, public returns: Expression) {
+        super(position, annotations);
     }
 }
 
 export class ServiceExpression extends AnnotatedExpression {
     nodeType = Token.Service;
-    constructor(public position: ExpressionPosition, public name: string, public annotations: AnnotationExpression[], public methods: MethodExpression[]) {
-        super(annotations);
+    constructor(position: ExpressionPosition, public name: string, public annotations: AnnotationExpression[], public methods: MethodExpression[]) {
+        super(position, annotations);
     }
 }
 
 export class AnonymousRecordExpression extends Expression {
     nodeType = Token.AnonymousRecord;
-    constructor(public position: ExpressionPosition, public properties: PropertyExpression[]) {
-        super();
+    constructor(position: ExpressionPosition, public properties: PropertyExpression[]) {
+        super(position);
     }
 }
 
 export class NumericEnumExpression extends AnnotatedExpression {
     nodeType = Token.NumericEnum;
-    constructor(public position: ExpressionPosition, public name: string, public annotations: AnnotationExpression[], public members: NumericEnumMemberExpression[]) {
-        super(annotations);
+    constructor(position: ExpressionPosition, public name: string, public annotations: AnnotationExpression[], public members: NumericEnumMemberExpression[]) {
+        super(position, annotations);
     }
 }
 
 export class NumericEnumMemberExpression extends Expression {
     nodeType = Token.NumericEnumMember;
-    constructor(public position: ExpressionPosition, public name: string, public value: number) {
-        super();
+    constructor(position: ExpressionPosition, public name: string, public value: number) {
+        super(position);
     }
 }
 
 export class StringEnumExpression extends AnnotatedExpression {
     nodeType = Token.StringEnum;
-    constructor(public position: ExpressionPosition, public name: string, public annotations: AnnotationExpression[],  public members: StringEnumMemberExpression[]) {
-        super(annotations);
+    constructor(position: ExpressionPosition, public name: string, public annotations: AnnotationExpression[],  public members: StringEnumMemberExpression[]) {
+        super(position, annotations);
     }
 }
 
 export class StringEnumMemberExpression extends Expression {
     nodeType = Token.StringEnumMember;
-    constructor(public position: ExpressionPosition, public name: string, public value: string) {
-        super();
+    constructor(position: ExpressionPosition, public name: string, public value: string) {
+        super(position);
     }
 }
 
@@ -282,20 +284,18 @@ export function createExpression(type: Token, position: ExpressionPosition, ...a
         case Token.Record: return Expression.createRecord(position, args);
         case Token.Property: return Expression.createProperty(position, args);
         case Token.PrimitiveType: return Expression.createType(position, args);
-        case Token.UserType: return Expression.createRecordType(position, args);
+        case Token.UserType: return Expression.createUserType(position, args);
         case Token.OptionalType: return Expression.createOptionalType(position, args);
         case Token.ImportType: return Expression.createImportType(position, args);
         case Token.RepeatedType: return Expression.createRepeatedType(position, args);
         case Token.MapType: return Expression.createMapType(position, args);
         case Token.Annotation: return Expression.createAnnotation(position, args);
-
+        // Enums
         case Token.NumericEnum: return Expression.createNumericEnum(position, args);
         case Token.NumericEnumMember: return Expression.createNumericEnumMember(position, args);
-
         case Token.StringEnum: return Expression.createStringEnum(position, args);
         case Token.StringEnumMember: return Expression.createStringEnumMember(position, args);
-
-
+        // Service
         case Token.Service: return Expression.createService(position, args);
         case Token.Method: return Expression.createMethod(position, args);
         case Token.AnonymousRecord: return Expression.createAnonymousRecord(position, args);

@@ -1,19 +1,19 @@
-import { Expression, PackageExpression, RecordExpression, AnnotationExpression, PropertyExpression, TypeExpression, ImportTypeExpression, RepeatedTypeExpression, OptionalTypeExpression, MapTypeExpression, RecordTypeExpression, ServiceExpression, MethodExpression, AnonymousRecordExpression, NumericEnumExpression, NumericEnumMemberExpression, StringEnumExpression, StringEnumMemberExpression } from './expressions';
+import { Expression, PackageExpression, RecordExpression, AnnotationExpression, PropertyExpression, TypeExpression, ImportTypeExpression, RepeatedTypeExpression, OptionalTypeExpression, MapTypeExpression, UserTypeExpression, ServiceExpression, MethodExpression, AnonymousRecordExpression, NumericEnumExpression, NumericEnumMemberExpression, StringEnumExpression, StringEnumMemberExpression } from './expressions';
 export interface IVisitor {
     visit(expression: Expression): any;
     visitPackage(expression: PackageExpression): any;
     visitRecord(expression: RecordExpression): any;
     visitProperty(expression: PropertyExpression): any;
-    visitType(expression: TypeExpression): any;
-    visitUserType(expression: RecordTypeExpression): any;
-    visitImportType(expression: ImportTypeExpression): any;
-    visitOptionalType(expression: OptionalTypeExpression): any;
-    visitRepeatedType(expression: RepeatedTypeExpression): any;
-    visitMapType(expression: MapTypeExpression): any;
     visitNumericEnum(expression: NumericEnumExpression): any;
     visitNumericEnumMember(expression: NumericEnumMemberExpression): any;
     visitStringEnum(expression: StringEnumExpression): any;
     visitStringEnumMember(expression: StringEnumMemberExpression): any;
+    visitType(expression: TypeExpression): any;
+    visitUserType(expression: UserTypeExpression): any;
+    visitImportType(expression: ImportTypeExpression): any;
+    visitMapType(expression: MapTypeExpression): any;
+    visitOptionalType(expression: OptionalTypeExpression): any;
+    visitRepeatedType(expression: RepeatedTypeExpression): any;
     visitAnnotation(expression: AnnotationExpression): any;
     visitService(expression: ServiceExpression): any;
     visitMethod(expression: MethodExpression): any;
@@ -21,7 +21,7 @@ export interface IVisitor {
 }
 export declare abstract class BaseVisitor implements IVisitor {
     visit(expression: Expression): any;
-    visitUserType(expression: RecordTypeExpression): any;
+    visitUserType(expression: UserTypeExpression): any;
     abstract visitPackage(expression: PackageExpression): any;
     abstract visitRecord(expression: RecordExpression): any;
     abstract visitProperty(expression: PropertyExpression): any;
